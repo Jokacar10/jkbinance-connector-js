@@ -814,7 +814,7 @@ export function replaceWebsocketStreamsPlaceholders(
  */
 export function buildUserAgent(packageName: string, packageVersion: string): string {
     const BINANCE_ENV_VAR_USER_AGENT_REGEX =
-        /^binance-cli\/[A-Za-z0-9._-]+ \([^;()]+; [^;()]+; [^;()]+\)$/;
+        /^binance-(?:cli|skill)(?:\/[A-Za-z0-9._-]+){0,2} \([^;()]+; [^;()]+; [^;()]+\)$/;
     const overriddenUserAgent = process.env['BINANCE_CONNECTOR_JS_USER_AGENT']?.trim();
 
     if (overriddenUserAgent && BINANCE_ENV_VAR_USER_AGENT_REGEX.test(overriddenUserAgent))

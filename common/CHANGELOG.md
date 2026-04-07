@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.3.11 - 2026-04-07
+
+### Changed (1)
+
+- Update user agent override to accept both `binance-cli` and `binance-skill`.
+
 ## 2.3.10 - 2026-03-30
 
 ### Changed (1)
