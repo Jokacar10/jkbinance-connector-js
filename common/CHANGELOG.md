@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.3.12 - 2026-04-14
+
+### Changed (1)
+
+- Resolve security vulnerabilities on `axios`.
+
 ## 2.3.11 - 2026-04-07
 
 ### Changed (1)
