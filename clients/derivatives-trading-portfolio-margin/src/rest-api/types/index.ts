@@ -35,6 +35,7 @@ export * from './cm-position-adl-quantile-estimation-response-inner';
 export * from './cm-position-adl-quantile-estimation-response-inner-adl-quantile';
 export * from './fund-auto-collection-response';
 export * from './fund-collection-by-asset-response';
+export * from './futures-tradfi-perps-contract-response';
 export * from './get-auto-repay-futures-status-response';
 export * from './get-cm-account-detail-response';
 export * from './get-cm-account-detail-response-assets-inner';

@@ -265,4 +265,34 @@ export interface Executionreport {
      * @memberof Executionreport
      */
     B?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof Executionreport
+     */
+    Cs?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof Executionreport
+     */
+    pl?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof Executionreport
+     */
+    pL?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof Executionreport
+     */
+    pY?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof Executionreport
+     */
+    eR?: string;
 }

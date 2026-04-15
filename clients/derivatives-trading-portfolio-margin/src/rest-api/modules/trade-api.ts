@@ -33,6 +33,7 @@ import type {
     CancelUmOrderResponse,
     CmAccountTradeListResponse,
     CmPositionAdlQuantileEstimationResponse,
+    FuturesTradfiPerpsContractResponse,
     GetUmFuturesBnbBurnStatusResponse,
     MarginAccountBorrowResponse,
     MarginAccountNewOcoResponse,
@@ -701,6 +702,35 @@ const TradeApiAxiosParamCreator = function (configuration: ConfigurationRestAPI)
             return {
                 endpoint: '/papi/v1/cm/adlQuantile',
                 method: 'GET',
+                queryParams: localVarQueryParameter,
+                bodyParams: localVarBodyParameter,
+                timeUnit: _timeUnit,
+            };
+        },
+        /**
+         * Sign TradFi-Perps agreement contract
+         *
+         * Weight: 5
+         *
+         * @summary Futures TradFi Perps Contract(USER_DATA)
+         * @param {number | bigint} [recvWindow]
+         *
+         * @throws {RequiredError}
+         */
+        futuresTradfiPerpsContract: async (recvWindow?: number | bigint): Promise<RequestArgs> => {
+            const localVarQueryParameter: Record<string, unknown> = {};
+            const localVarBodyParameter: Record<string, unknown> = {};
+
+            if (recvWindow !== undefined && recvWindow !== null) {
+                localVarQueryParameter['recvWindow'] = recvWindow;
+            }
+
+            let _timeUnit: TimeUnit | undefined;
+            if ('timeUnit' in configuration) _timeUnit = configuration.timeUnit as TimeUnit;
+
+            return {
+                endpoint: '/papi/v1/um/stock/contract',
+                method: 'POST',
                 queryParams: localVarQueryParameter,
                 bodyParams: localVarBodyParameter,
                 timeUnit: _timeUnit,
@@ -3085,6 +3115,7 @@ const TradeApiAxiosParamCreator = function (configuration: ConfigurationRestAPI)
          *
          * If "autoCloseType" is not sent, orders with both of the types will be returned
          * If "startTime" is not sent, data within 7 days before "endTime" can be queried
+         * Only support querying data in the past 90 days
          *
          * Weight: 20 with symbol, 50 without symbol
          *
@@ -3195,6 +3226,7 @@ const TradeApiAxiosParamCreator = function (configuration: ConfigurationRestAPI)
          *
          * If `autoCloseType` is not sent, orders with both of the types will be returned
          * If `startTime` is not sent, data within 7 days before `endTime` can be queried
+         * Only support querying data in the past 90 days
          *
          * Weight: 20 with symbol, 50 without symbol
          *
@@ -3615,6 +3647,20 @@ export interface TradeApiInterface {
     cmPositionAdlQuantileEstimation(
         requestParameters?: CmPositionAdlQuantileEstimationRequest
     ): Promise<RestApiResponse<CmPositionAdlQuantileEstimationResponse>>;
+    /**
+     * Sign TradFi-Perps agreement contract
+     *
+     * Weight: 5
+     *
+     * @summary Futures TradFi Perps Contract(USER_DATA)
+     * @param {FuturesTradfiPerpsContractRequest} requestParameters Request parameters.
+     *
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @memberof TradeApiInterface
+     */
+    futuresTradfiPerpsContract(
+        requestParameters?: FuturesTradfiPerpsContractRequest
+    ): Promise<RestApiResponse<FuturesTradfiPerpsContractResponse>>;
     /**
      * Get user's BNB Fee Discount for UM Futures (Fee Discount On or Fee Discount Off )
      *
@@ -4305,6 +4351,7 @@ export interface TradeApiInterface {
      *
      * If "autoCloseType" is not sent, orders with both of the types will be returned
      * If "startTime" is not sent, data within 7 days before "endTime" can be queried
+     * Only support querying data in the past 90 days
      *
      * Weight: 20 with symbol, 50 without symbol
      *
@@ -4336,6 +4383,7 @@ export interface TradeApiInterface {
      *
      * If `autoCloseType` is not sent, orders with both of the types will be returned
      * If `startTime` is not sent, data within 7 days before `endTime` can be queried
+     * Only support querying data in the past 90 days
      *
      * Weight: 20 with symbol, 50 without symbol
      *
@@ -4796,6 +4844,19 @@ export interface CmPositionAdlQuantileEstimationRequest {
      *
      * @type {number | bigint}
      * @memberof TradeApiCmPositionAdlQuantileEstimation
+     */
+    readonly recvWindow?: number | bigint;
+}
+
+/**
+ * Request parameters for futuresTradfiPerpsContract operation in TradeApi.
+ * @interface FuturesTradfiPerpsContractRequest
+ */
+export interface FuturesTradfiPerpsContractRequest {
+    /**
+     *
+     * @type {number | bigint}
+     * @memberof TradeApiFuturesTradfiPerpsContract
      */
     readonly recvWindow?: number | bigint;
 }
@@ -7269,6 +7330,35 @@ export class TradeApi implements TradeApiInterface {
     }
 
     /**
+     * Sign TradFi-Perps agreement contract
+     *
+     * Weight: 5
+     *
+     * @summary Futures TradFi Perps Contract(USER_DATA)
+     * @param {FuturesTradfiPerpsContractRequest} requestParameters Request parameters.
+     * @returns {Promise<RestApiResponse<FuturesTradfiPerpsContractResponse>>}
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @memberof TradeApi
+     * @see {@link https://developers.binance.com/docs/derivatives/portfolio-margin/trade/Futures-TradFi-Perps-Contract Binance API Documentation}
+     */
+    public async futuresTradfiPerpsContract(
+        requestParameters: FuturesTradfiPerpsContractRequest = {}
+    ): Promise<RestApiResponse<FuturesTradfiPerpsContractResponse>> {
+        const localVarAxiosArgs = await this.localVarAxiosParamCreator.futuresTradfiPerpsContract(
+            requestParameters?.recvWindow
+        );
+        return sendRequest<FuturesTradfiPerpsContractResponse>(
+            this.configuration,
+            localVarAxiosArgs.endpoint,
+            localVarAxiosArgs.method,
+            localVarAxiosArgs.queryParams,
+            localVarAxiosArgs.bodyParams,
+            localVarAxiosArgs?.timeUnit,
+            { isSigned: true }
+        );
+    }
+
+    /**
      * Get user's BNB Fee Discount for UM Futures (Fee Discount On or Fee Discount Off )
      *
      * Weight: 30
@@ -8710,6 +8800,7 @@ export class TradeApi implements TradeApiInterface {
      *
      * If "autoCloseType" is not sent, orders with both of the types will be returned
      * If "startTime" is not sent, data within 7 days before "endTime" can be queried
+     * Only support querying data in the past 90 days
      *
      * Weight: 20 with symbol, 50 without symbol
      *
@@ -8780,6 +8871,7 @@ export class TradeApi implements TradeApiInterface {
      *
      * If `autoCloseType` is not sent, orders with both of the types will be returned
      * If `startTime` is not sent, data within 7 days before `endTime` can be queried
+     * Only support querying data in the past 90 days
      *
      * Weight: 20 with symbol, 50 without symbol
      *

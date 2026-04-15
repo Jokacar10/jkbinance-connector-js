@@ -57,10 +57,10 @@ export interface GetUmIncomeHistoryResponseInner {
     time?: number | bigint;
     /**
      *
-     * @type {string}
+     * @type {number | bigint}
      * @memberof GetUmIncomeHistoryResponseInner
      */
-    tranId?: string;
+    tranId?: number | bigint;
     /**
      *
      * @type {string}

@@ -1,5 +1,24 @@
 # Changelog
 
+## 12.0.0 - 2026-04-15
+
+### Added (1)
+
+#### REST API
+
+- `futuresTradfiPerpsContract()` (`POST /papi/v1/um/stock/contract`)
+
+### Changed (3)
+
+- Update `@binance/common` library to version `2.3.12`.
+- Resolve security vulnerabilities on `axios`.
+
+#### REST API
+
+- Modified response for `getUmIncomeHistory()` (`GET /papi/v1/um/income`):
+  - items.`tranId`: type `string` → `integer`
+  - items.`tranId`: type `string` → `integer`
+
 ## 11.0.9 - 2026-04-07
 
 ### Changed (1)

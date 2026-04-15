@@ -73,6 +73,7 @@ import {
     CancelUmOrderRequest,
     CmAccountTradeListRequest,
     CmPositionAdlQuantileEstimationRequest,
+    FuturesTradfiPerpsContractRequest,
     GetUmFuturesBnbBurnStatusRequest,
     MarginAccountBorrowRequest,
     MarginAccountNewOcoRequest,
@@ -131,6 +132,7 @@ import type {
     CancelUmOrderResponse,
     CmAccountTradeListResponse,
     CmPositionAdlQuantileEstimationResponse,
+    FuturesTradfiPerpsContractResponse,
     GetUmFuturesBnbBurnStatusResponse,
     MarginAccountBorrowResponse,
     MarginAccountNewOcoResponse,
@@ -1711,6 +1713,63 @@ describe('TradeApi', () => {
                 .spyOn(client, 'cmPositionAdlQuantileEstimation')
                 .mockRejectedValueOnce(mockError);
             await expect(client.cmPositionAdlQuantileEstimation()).rejects.toThrow('ResponseError');
+            spy.mockRestore();
+        });
+    });
+
+    describe('futuresTradfiPerpsContract()', () => {
+        it('should execute futuresTradfiPerpsContract() successfully with required parameters only', async () => {
+            mockResponse = JSONParse(JSONStringify({ code: 200, msg: 'success' }));
+
+            const spy = jest.spyOn(client, 'futuresTradfiPerpsContract').mockReturnValue(
+                Promise.resolve({
+                    data: () => Promise.resolve(mockResponse),
+                    status: 200,
+                    headers: {},
+                    rateLimits: [],
+                } as RestApiResponse<FuturesTradfiPerpsContractResponse>)
+            );
+            const response = await client.futuresTradfiPerpsContract();
+            expect(response).toBeDefined();
+            await expect(response.data()).resolves.toBe(mockResponse);
+            spy.mockRestore();
+        });
+
+        it('should execute futuresTradfiPerpsContract() successfully with optional parameters', async () => {
+            const params: FuturesTradfiPerpsContractRequest = {
+                recvWindow: 5000,
+            };
+
+            mockResponse = JSONParse(JSONStringify({ code: 200, msg: 'success' }));
+
+            const spy = jest.spyOn(client, 'futuresTradfiPerpsContract').mockReturnValue(
+                Promise.resolve({
+                    data: () => Promise.resolve(mockResponse),
+                    status: 200,
+                    headers: {},
+                    rateLimits: [],
+                } as RestApiResponse<FuturesTradfiPerpsContractResponse>)
+            );
+            const response = await client.futuresTradfiPerpsContract(params);
+            expect(response).toBeDefined();
+            await expect(response.data()).resolves.toBe(mockResponse);
+            spy.mockRestore();
+        });
+
+        it('should throw an error when server is returning an error', async () => {
+            const errorResponse = {
+                code: -1111,
+                msg: 'Server Error',
+            };
+
+            const mockError = new Error('ResponseError') as Error & {
+                response?: { status: number; data: unknown };
+            };
+            mockError.response = { status: 400, data: errorResponse };
+            const spy = jest
+                .spyOn(client, 'futuresTradfiPerpsContract')
+                .mockRejectedValueOnce(mockError);
+            await expect(client.futuresTradfiPerpsContract()).rejects.toThrow('ResponseError');
             spy.mockRestore();
         });
     });

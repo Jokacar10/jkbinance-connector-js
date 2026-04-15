@@ -76,6 +76,7 @@ import type {
     CancelUmOrderRequest,
     CmAccountTradeListRequest,
     CmPositionAdlQuantileEstimationRequest,
+    FuturesTradfiPerpsContractRequest,
     GetUmFuturesBnbBurnStatusRequest,
     MarginAccountBorrowRequest,
     MarginAccountNewOcoRequest,
@@ -181,6 +182,7 @@ import type {
     CancelUmOrderResponse,
     CmAccountTradeListResponse,
     CmPositionAdlQuantileEstimationResponse,
+    FuturesTradfiPerpsContractResponse,
     GetUmFuturesBnbBurnStatusResponse,
     MarginAccountBorrowResponse,
     MarginAccountNewOcoResponse,
@@ -1407,6 +1409,24 @@ export class RestAPI {
     }
 
     /**
+     * Sign TradFi-Perps agreement contract
+     *
+     * Weight: 5
+     *
+     * @summary Futures TradFi Perps Contract(USER_DATA)
+     * @param {FuturesTradfiPerpsContractRequest} requestParameters Request parameters.
+     *
+     * @returns {Promise<RestApiResponse<FuturesTradfiPerpsContractResponse>>}
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @see {@link https://developers.binance.com/docs/derivatives/portfolio-margin/trade/Futures-TradFi-Perps-Contract Binance API Documentation}
+     */
+    futuresTradfiPerpsContract(
+        requestParameters: FuturesTradfiPerpsContractRequest = {}
+    ): Promise<RestApiResponse<FuturesTradfiPerpsContractResponse>> {
+        return this.tradeApi.futuresTradfiPerpsContract(requestParameters);
+    }
+
+    /**
      * Get user's BNB Fee Discount for UM Futures (Fee Discount On or Fee Discount Off )
      *
      * Weight: 30
@@ -2244,6 +2264,7 @@ export class RestAPI {
      *
      * If "autoCloseType" is not sent, orders with both of the types will be returned
      * If "startTime" is not sent, data within 7 days before "endTime" can be queried
+     * Only support querying data in the past 90 days
      *
      * Weight: 20 with symbol, 50 without symbol
      *
@@ -2283,6 +2304,7 @@ export class RestAPI {
      *
      * If `autoCloseType` is not sent, orders with both of the types will be returned
      * If `startTime` is not sent, data within 7 days before `endTime` can be queried
+     * Only support querying data in the past 90 days
      *
      * Weight: 20 with symbol, 50 without symbol
      *
