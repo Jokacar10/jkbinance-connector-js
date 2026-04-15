@@ -34,7 +34,6 @@ import type {
     ChangePositionModeResponse,
     CurrentAllAlgoOpenOrdersResponse,
     CurrentAllOpenOrdersResponse,
-    FuturesTradfiPerpsContractResponse,
     GetOrderModifyHistoryResponse,
     GetPositionMarginChangeHistoryResponse,
     ModifyIsolatedPositionMarginResponse,
@@ -1933,6 +1932,7 @@ const TradeApiAxiosParamCreator = function (configuration: ConfigurationRestAPI)
          *
          * If "autoCloseType" is not sent, orders with both of the types will be returned
          * If "startTime" is not sent, data within 7 days before "endTime" can be queried
+         * Only support querying data in the past 90 days
          *
          * Weight: 20 with symbol, 50 without symbol
          *
@@ -2234,7 +2234,7 @@ export interface TradeApiInterface {
      */
     futuresTradfiPerpsContract(
         requestParameters?: FuturesTradfiPerpsContractRequest
-    ): Promise<RestApiResponse<FuturesTradfiPerpsContractResponse>>;
+    ): Promise<RestApiResponse<void>>;
     /**
      * Get order modification history
      *
@@ -2605,6 +2605,7 @@ export interface TradeApiInterface {
      *
      * If "autoCloseType" is not sent, orders with both of the types will be returned
      * If "startTime" is not sent, data within 7 days before "endTime" can be queried
+     * Only support querying data in the past 90 days
      *
      * Weight: 20 with symbol, 50 without symbol
      *
@@ -4443,18 +4444,18 @@ export class TradeApi implements TradeApiInterface {
      *
      * @summary Futures TradFi Perps Contract(USER_DATA)
      * @param {FuturesTradfiPerpsContractRequest} requestParameters Request parameters.
-     * @returns {Promise<RestApiResponse<FuturesTradfiPerpsContractResponse>>}
+     * @returns {Promise<RestApiResponse<void>>}
      * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
      * @memberof TradeApi
      * @see {@link https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Futures-TradFi-Perps-Contract Binance API Documentation}
      */
     public async futuresTradfiPerpsContract(
         requestParameters: FuturesTradfiPerpsContractRequest = {}
-    ): Promise<RestApiResponse<FuturesTradfiPerpsContractResponse>> {
+    ): Promise<RestApiResponse<void>> {
         const localVarAxiosArgs = await this.localVarAxiosParamCreator.futuresTradfiPerpsContract(
             requestParameters?.recvWindow
         );
-        return sendRequest<FuturesTradfiPerpsContractResponse>(
+        return sendRequest<void>(
             this.configuration,
             localVarAxiosArgs.endpoint,
             localVarAxiosArgs.method,
@@ -5176,6 +5177,7 @@ export class TradeApi implements TradeApiInterface {
      *
      * If "autoCloseType" is not sent, orders with both of the types will be returned
      * If "startTime" is not sent, data within 7 days before "endTime" can be queried
+     * Only support querying data in the past 90 days
      *
      * Weight: 20 with symbol, 50 without symbol
      *

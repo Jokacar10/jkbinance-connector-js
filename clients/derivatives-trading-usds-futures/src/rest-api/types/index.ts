@@ -48,7 +48,6 @@ export * from './futures-account-balance-v2-response';
 export * from './futures-account-balance-v2-response-inner';
 export * from './futures-account-balance-v3-response';
 export * from './futures-account-configuration-response';
-export * from './futures-tradfi-perps-contract-response';
 export * from './futures-trading-quantitative-rules-indicators-response';
 export * from './futures-trading-quantitative-rules-indicators-response-indicators';
 export * from './futures-trading-quantitative-rules-indicators-response-indicators-accountinner';

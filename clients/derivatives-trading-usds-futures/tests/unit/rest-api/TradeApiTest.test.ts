@@ -92,7 +92,6 @@ import type {
     ChangePositionModeResponse,
     CurrentAllAlgoOpenOrdersResponse,
     CurrentAllOpenOrdersResponse,
-    FuturesTradfiPerpsContractResponse,
     GetOrderModifyHistoryResponse,
     GetPositionMarginChangeHistoryResponse,
     ModifyIsolatedPositionMarginResponse,
@@ -1587,19 +1586,17 @@ describe('TradeApi', () => {
 
     describe('futuresTradfiPerpsContract()', () => {
         it('should execute futuresTradfiPerpsContract() successfully with required parameters only', async () => {
-            mockResponse = JSONParse(JSONStringify({ code: 200, msg: 'success' }));
-
             const spy = jest.spyOn(client, 'futuresTradfiPerpsContract').mockReturnValue(
                 Promise.resolve({
-                    data: () => Promise.resolve(mockResponse),
+                    data: () => Promise.resolve(),
                     status: 200,
                     headers: {},
                     rateLimits: [],
-                } as RestApiResponse<FuturesTradfiPerpsContractResponse>)
+                } as RestApiResponse<void>)
             );
             const response = await client.futuresTradfiPerpsContract();
-            expect(response).toBeDefined();
-            await expect(response.data()).resolves.toBe(mockResponse);
+
+            await expect(response.data()).resolves.toBeUndefined();
             spy.mockRestore();
         });
 
@@ -1608,19 +1605,17 @@ describe('TradeApi', () => {
                 recvWindow: 5000,
             };
 
-            mockResponse = JSONParse(JSONStringify({ code: 200, msg: 'success' }));
-
             const spy = jest.spyOn(client, 'futuresTradfiPerpsContract').mockReturnValue(
                 Promise.resolve({
-                    data: () => Promise.resolve(mockResponse),
+                    data: () => Promise.resolve(),
                     status: 200,
                     headers: {},
                     rateLimits: [],
-                } as RestApiResponse<FuturesTradfiPerpsContractResponse>)
+                } as RestApiResponse<void>)
             );
             const response = await client.futuresTradfiPerpsContract(params);
-            expect(response).toBeDefined();
-            await expect(response.data()).resolves.toBe(mockResponse);
+
+            await expect(response.data()).resolves.toBeUndefined();
             spy.mockRestore();
         });
 

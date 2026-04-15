@@ -196,7 +196,6 @@ import type {
     ChangePositionModeResponse,
     CurrentAllAlgoOpenOrdersResponse,
     CurrentAllOpenOrdersResponse,
-    FuturesTradfiPerpsContractResponse,
     GetOrderModifyHistoryResponse,
     GetPositionMarginChangeHistoryResponse,
     ModifyIsolatedPositionMarginResponse,
@@ -1093,7 +1092,7 @@ export class RestAPI {
      * Get older market historical trades.
      *
      * Market trades means trades filled in the order book. Only market trades will be returned, which means the insurance fund trades and ADL trades won't be returned.
-     * Only supports data from within the last three months
+     * Only supports data from within the last one month
      *
      * Weight: 20
      *
@@ -1806,13 +1805,13 @@ export class RestAPI {
      * @summary Futures TradFi Perps Contract(USER_DATA)
      * @param {FuturesTradfiPerpsContractRequest} requestParameters Request parameters.
      *
-     * @returns {Promise<RestApiResponse<FuturesTradfiPerpsContractResponse>>}
+     * @returns {Promise<RestApiResponse<void>>}
      * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
      * @see {@link https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Futures-TradFi-Perps-Contract Binance API Documentation}
      */
     futuresTradfiPerpsContract(
         requestParameters: FuturesTradfiPerpsContractRequest = {}
-    ): Promise<RestApiResponse<FuturesTradfiPerpsContractResponse>> {
+    ): Promise<RestApiResponse<void>> {
         return this.tradeApi.futuresTradfiPerpsContract(requestParameters);
     }
 
@@ -2250,6 +2249,7 @@ export class RestAPI {
      *
      * If "autoCloseType" is not sent, orders with both of the types will be returned
      * If "startTime" is not sent, data within 7 days before "endTime" can be queried
+     * Only support querying data in the past 90 days
      *
      * Weight: 20 with symbol, 50 without symbol
      *

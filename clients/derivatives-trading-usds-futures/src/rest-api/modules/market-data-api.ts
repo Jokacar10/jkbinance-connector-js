@@ -775,7 +775,7 @@ const MarketDataApiAxiosParamCreator = function (configuration: ConfigurationRes
          * Get older market historical trades.
          *
          * Market trades means trades filled in the order book. Only market trades will be returned, which means the insurance fund trades and ADL trades won't be returned.
-         * Only supports data from within the last three months
+         * Only supports data from within the last one month
          *
          * Weight: 20
          *
@@ -1837,7 +1837,7 @@ export interface MarketDataApiInterface {
      * Get older market historical trades.
      *
      * Market trades means trades filled in the order book. Only market trades will be returned, which means the insurance fund trades and ADL trades won't be returned.
-     * Only supports data from within the last three months
+     * Only supports data from within the last one month
      *
      * Weight: 20
      *
@@ -3487,7 +3487,7 @@ export class MarketDataApi implements MarketDataApiInterface {
      * Get older market historical trades.
      *
      * Market trades means trades filled in the order book. Only market trades will be returned, which means the insurance fund trades and ADL trades won't be returned.
-     * Only supports data from within the last three months
+     * Only supports data from within the last one month
      *
      * Weight: 20
      *
