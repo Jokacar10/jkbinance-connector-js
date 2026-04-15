@@ -1,5 +1,20 @@
 # Changelog
 
+## 13.0.0 - 2026-04-15
+
+### Added (3)
+
+#### REST API
+
+- `deleteMarginCallLevel()` (`DELETE /sapi/v1/portfolio/margin-call-level`)
+- `getMarginCallLevel()` (`GET /sapi/v1/portfolio/margin-call-level`)
+- `setMarginCallLevel()` (`POST /sapi/v1/portfolio/margin-call-level`)
+
+### Changed (2)
+
+- Update `@binance/common` library to version `2.3.12`.
+- Resolve security vulnerabilities on `axios`.
+
 ## 12.0.10 - 2026-04-07
 
 ### Changed (1)

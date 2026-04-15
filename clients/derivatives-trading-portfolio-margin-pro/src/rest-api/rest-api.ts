@@ -18,10 +18,12 @@ import { MarketDataApi } from './modules/market-data-api';
 import type {
     BnbTransferRequest,
     ChangeAutoRepayFuturesStatusRequest,
+    DeleteMarginCallLevelRequest,
     FundAutoCollectionRequest,
     FundCollectionByAssetRequest,
     GetAutoRepayFuturesStatusRequest,
     GetDeltaModeStatusRequest,
+    GetMarginCallLevelRequest,
     GetPortfolioMarginProAccountBalanceRequest,
     GetPortfolioMarginProAccountInfoRequest,
     GetPortfolioMarginProSpanAccountInfoRequest,
@@ -31,6 +33,7 @@ import type {
     QueryPortfolioMarginProBankruptcyLoanRepayHistoryRequest,
     QueryPortfolioMarginProNegativeBalanceInterestHistoryRequest,
     RepayFuturesNegativeBalanceRequest,
+    SetMarginCallLevelRequest,
     SwitchDeltaModeRequest,
     TransferLdusdtRwusdForPortfolioMarginRequest,
 } from './modules/account-api';
@@ -42,10 +45,12 @@ import type {
 import type {
     BnbTransferResponse,
     ChangeAutoRepayFuturesStatusResponse,
+    DeleteMarginCallLevelResponse,
     FundAutoCollectionResponse,
     FundCollectionByAssetResponse,
     GetAutoRepayFuturesStatusResponse,
     GetDeltaModeStatusResponse,
+    GetMarginCallLevelResponse,
     GetPortfolioMarginProAccountBalanceResponse,
     GetPortfolioMarginProAccountInfoResponse,
     GetPortfolioMarginProSpanAccountInfoResponse,
@@ -55,6 +60,7 @@ import type {
     QueryPortfolioMarginProBankruptcyLoanRepayHistoryResponse,
     QueryPortfolioMarginProNegativeBalanceInterestHistoryResponse,
     RepayFuturesNegativeBalanceResponse,
+    SetMarginCallLevelResponse,
     SwitchDeltaModeResponse,
     TransferLdusdtRwusdForPortfolioMarginResponse,
 } from './types';
@@ -167,6 +173,24 @@ export class RestAPI {
     }
 
     /**
+     * Delete the margin call level for a Portfolio Margin account.
+     *
+     * Weight: 1500
+     *
+     * @summary Delete Margin Call Level (USER_DATA)
+     * @param {DeleteMarginCallLevelRequest} requestParameters Request parameters.
+     *
+     * @returns {Promise<RestApiResponse<DeleteMarginCallLevelResponse>>}
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @see {@link https://developers.binance.com/docs/derivatives/portfolio-margin-pro/account/Delete-Margin-Call-Level Binance API Documentation}
+     */
+    deleteMarginCallLevel(
+        requestParameters: DeleteMarginCallLevelRequest = {}
+    ): Promise<RestApiResponse<DeleteMarginCallLevelResponse>> {
+        return this.accountApi.deleteMarginCallLevel(requestParameters);
+    }
+
+    /**
      * Transfers all assets from Futures Account to Margin account
      *
      * The BNB would not be collected from UM-PM account to the Portfolio Margin account.
@@ -241,6 +265,24 @@ export class RestAPI {
         requestParameters: GetDeltaModeStatusRequest = {}
     ): Promise<RestApiResponse<GetDeltaModeStatusResponse>> {
         return this.accountApi.getDeltaModeStatus(requestParameters);
+    }
+
+    /**
+     * Get the margin call level for a Portfolio Margin account.
+     *
+     * Weight: 1500
+     *
+     * @summary Get Margin Call Level (USER_DATA)
+     * @param {GetMarginCallLevelRequest} requestParameters Request parameters.
+     *
+     * @returns {Promise<RestApiResponse<GetMarginCallLevelResponse>>}
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @see {@link https://developers.binance.com/docs/derivatives/portfolio-margin-pro/account/Get-Margin-Call-Level Binance API Documentation}
+     */
+    getMarginCallLevel(
+        requestParameters: GetMarginCallLevelRequest = {}
+    ): Promise<RestApiResponse<GetMarginCallLevelResponse>> {
+        return this.accountApi.getMarginCallLevel(requestParameters);
     }
 
     /**
@@ -414,6 +456,24 @@ export class RestAPI {
         requestParameters: RepayFuturesNegativeBalanceRequest = {}
     ): Promise<RestApiResponse<RepayFuturesNegativeBalanceResponse>> {
         return this.accountApi.repayFuturesNegativeBalance(requestParameters);
+    }
+
+    /**
+     * Set the margin call level for a Portfolio Margin account. When the account's uniMMR drops to the specified level, a notification will be sent via email and SMS.
+     *
+     * Weight: 1500
+     *
+     * @summary Set Margin Call Level (USER_DATA)
+     * @param {SetMarginCallLevelRequest} requestParameters Request parameters.
+     *
+     * @returns {Promise<RestApiResponse<SetMarginCallLevelResponse>>}
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @see {@link https://developers.binance.com/docs/derivatives/portfolio-margin-pro/account/Set-Margin-Call-Level Binance API Documentation}
+     */
+    setMarginCallLevel(
+        requestParameters: SetMarginCallLevelRequest
+    ): Promise<RestApiResponse<SetMarginCallLevelResponse>> {
+        return this.accountApi.setMarginCallLevel(requestParameters);
     }
 
     /**

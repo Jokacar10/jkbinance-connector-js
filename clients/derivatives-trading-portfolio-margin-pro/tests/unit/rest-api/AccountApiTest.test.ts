@@ -19,10 +19,12 @@ import { AccountApi } from '../../../src/rest-api';
 import {
     BnbTransferRequest,
     ChangeAutoRepayFuturesStatusRequest,
+    DeleteMarginCallLevelRequest,
     FundAutoCollectionRequest,
     FundCollectionByAssetRequest,
     GetAutoRepayFuturesStatusRequest,
     GetDeltaModeStatusRequest,
+    GetMarginCallLevelRequest,
     GetPortfolioMarginProAccountBalanceRequest,
     GetPortfolioMarginProAccountInfoRequest,
     GetPortfolioMarginProSpanAccountInfoRequest,
@@ -32,16 +34,19 @@ import {
     QueryPortfolioMarginProBankruptcyLoanRepayHistoryRequest,
     QueryPortfolioMarginProNegativeBalanceInterestHistoryRequest,
     RepayFuturesNegativeBalanceRequest,
+    SetMarginCallLevelRequest,
     SwitchDeltaModeRequest,
     TransferLdusdtRwusdForPortfolioMarginRequest,
 } from '../../../src/rest-api';
 import type {
     BnbTransferResponse,
     ChangeAutoRepayFuturesStatusResponse,
+    DeleteMarginCallLevelResponse,
     FundAutoCollectionResponse,
     FundCollectionByAssetResponse,
     GetAutoRepayFuturesStatusResponse,
     GetDeltaModeStatusResponse,
+    GetMarginCallLevelResponse,
     GetPortfolioMarginProAccountBalanceResponse,
     GetPortfolioMarginProAccountInfoResponse,
     GetPortfolioMarginProSpanAccountInfoResponse,
@@ -51,6 +56,7 @@ import type {
     QueryPortfolioMarginProBankruptcyLoanRepayHistoryResponse,
     QueryPortfolioMarginProNegativeBalanceInterestHistoryResponse,
     RepayFuturesNegativeBalanceResponse,
+    SetMarginCallLevelResponse,
     SwitchDeltaModeResponse,
     TransferLdusdtRwusdForPortfolioMarginResponse,
 } from '../../../src/rest-api/types';
@@ -238,6 +244,63 @@ describe('AccountApi', () => {
             await expect(client.changeAutoRepayFuturesStatus(params)).rejects.toThrow(
                 'ResponseError'
             );
+            spy.mockRestore();
+        });
+    });
+
+    describe('deleteMarginCallLevel()', () => {
+        it('should execute deleteMarginCallLevel() successfully with required parameters only', async () => {
+            mockResponse = JSONParse(JSONStringify({ msg: 'success' }));
+
+            const spy = jest.spyOn(client, 'deleteMarginCallLevel').mockReturnValue(
+                Promise.resolve({
+                    data: () => Promise.resolve(mockResponse),
+                    status: 200,
+                    headers: {},
+                    rateLimits: [],
+                } as RestApiResponse<DeleteMarginCallLevelResponse>)
+            );
+            const response = await client.deleteMarginCallLevel();
+            expect(response).toBeDefined();
+            await expect(response.data()).resolves.toBe(mockResponse);
+            spy.mockRestore();
+        });
+
+        it('should execute deleteMarginCallLevel() successfully with optional parameters', async () => {
+            const params: DeleteMarginCallLevelRequest = {
+                recvWindow: 5000,
+            };
+
+            mockResponse = JSONParse(JSONStringify({ msg: 'success' }));
+
+            const spy = jest.spyOn(client, 'deleteMarginCallLevel').mockReturnValue(
+                Promise.resolve({
+                    data: () => Promise.resolve(mockResponse),
+                    status: 200,
+                    headers: {},
+                    rateLimits: [],
+                } as RestApiResponse<DeleteMarginCallLevelResponse>)
+            );
+            const response = await client.deleteMarginCallLevel(params);
+            expect(response).toBeDefined();
+            await expect(response.data()).resolves.toBe(mockResponse);
+            spy.mockRestore();
+        });
+
+        it('should throw an error when server is returning an error', async () => {
+            const errorResponse = {
+                code: -1111,
+                msg: 'Server Error',
+            };
+
+            const mockError = new Error('ResponseError') as Error & {
+                response?: { status: number; data: unknown };
+            };
+            mockError.response = { status: 400, data: errorResponse };
+            const spy = jest
+                .spyOn(client, 'deleteMarginCallLevel')
+                .mockRejectedValueOnce(mockError);
+            await expect(client.deleteMarginCallLevel()).rejects.toThrow('ResponseError');
             spy.mockRestore();
         });
     });
@@ -483,6 +546,61 @@ describe('AccountApi', () => {
             mockError.response = { status: 400, data: errorResponse };
             const spy = jest.spyOn(client, 'getDeltaModeStatus').mockRejectedValueOnce(mockError);
             await expect(client.getDeltaModeStatus()).rejects.toThrow('ResponseError');
+            spy.mockRestore();
+        });
+    });
+
+    describe('getMarginCallLevel()', () => {
+        it('should execute getMarginCallLevel() successfully with required parameters only', async () => {
+            mockResponse = JSONParse(JSONStringify({ marginCallLevel: '1.67354637' }));
+
+            const spy = jest.spyOn(client, 'getMarginCallLevel').mockReturnValue(
+                Promise.resolve({
+                    data: () => Promise.resolve(mockResponse),
+                    status: 200,
+                    headers: {},
+                    rateLimits: [],
+                } as RestApiResponse<GetMarginCallLevelResponse>)
+            );
+            const response = await client.getMarginCallLevel();
+            expect(response).toBeDefined();
+            await expect(response.data()).resolves.toBe(mockResponse);
+            spy.mockRestore();
+        });
+
+        it('should execute getMarginCallLevel() successfully with optional parameters', async () => {
+            const params: GetMarginCallLevelRequest = {
+                recvWindow: 5000,
+            };
+
+            mockResponse = JSONParse(JSONStringify({ marginCallLevel: '1.67354637' }));
+
+            const spy = jest.spyOn(client, 'getMarginCallLevel').mockReturnValue(
+                Promise.resolve({
+                    data: () => Promise.resolve(mockResponse),
+                    status: 200,
+                    headers: {},
+                    rateLimits: [],
+                } as RestApiResponse<GetMarginCallLevelResponse>)
+            );
+            const response = await client.getMarginCallLevel(params);
+            expect(response).toBeDefined();
+            await expect(response.data()).resolves.toBe(mockResponse);
+            spy.mockRestore();
+        });
+
+        it('should throw an error when server is returning an error', async () => {
+            const errorResponse = {
+                code: -1111,
+                msg: 'Server Error',
+            };
+
+            const mockError = new Error('ResponseError') as Error & {
+                response?: { status: number; data: unknown };
+            };
+            mockError.response = { status: 400, data: errorResponse };
+            const spy = jest.spyOn(client, 'getMarginCallLevel').mockRejectedValueOnce(mockError);
+            await expect(client.getMarginCallLevel()).rejects.toThrow('ResponseError');
             spy.mockRestore();
         });
     });
@@ -1204,6 +1322,82 @@ describe('AccountApi', () => {
                 .spyOn(client, 'repayFuturesNegativeBalance')
                 .mockRejectedValueOnce(mockError);
             await expect(client.repayFuturesNegativeBalance()).rejects.toThrow('ResponseError');
+            spy.mockRestore();
+        });
+    });
+
+    describe('setMarginCallLevel()', () => {
+        it('should execute setMarginCallLevel() successfully with required parameters only', async () => {
+            const params: SetMarginCallLevelRequest = {
+                marginCallLevel: 5000.0,
+            };
+
+            mockResponse = JSONParse(JSONStringify({ marginCallLevel: '1.67354637' }));
+
+            const spy = jest.spyOn(client, 'setMarginCallLevel').mockReturnValue(
+                Promise.resolve({
+                    data: () => Promise.resolve(mockResponse),
+                    status: 200,
+                    headers: {},
+                    rateLimits: [],
+                } as RestApiResponse<SetMarginCallLevelResponse>)
+            );
+            const response = await client.setMarginCallLevel(params);
+            expect(response).toBeDefined();
+            await expect(response.data()).resolves.toBe(mockResponse);
+            spy.mockRestore();
+        });
+
+        it('should execute setMarginCallLevel() successfully with optional parameters', async () => {
+            const params: SetMarginCallLevelRequest = {
+                marginCallLevel: 5000.0,
+                recvWindow: 5000,
+            };
+
+            mockResponse = JSONParse(JSONStringify({ marginCallLevel: '1.67354637' }));
+
+            const spy = jest.spyOn(client, 'setMarginCallLevel').mockReturnValue(
+                Promise.resolve({
+                    data: () => Promise.resolve(mockResponse),
+                    status: 200,
+                    headers: {},
+                    rateLimits: [],
+                } as RestApiResponse<SetMarginCallLevelResponse>)
+            );
+            const response = await client.setMarginCallLevel(params);
+            expect(response).toBeDefined();
+            await expect(response.data()).resolves.toBe(mockResponse);
+            spy.mockRestore();
+        });
+
+        it('should throw RequiredError when marginCallLevel is missing', async () => {
+            const _params: SetMarginCallLevelRequest = {
+                marginCallLevel: 5000.0,
+            };
+            const params = Object.assign({ ..._params });
+            delete params?.marginCallLevel;
+
+            await expect(client.setMarginCallLevel(params)).rejects.toThrow(
+                'Required parameter marginCallLevel was null or undefined when calling setMarginCallLevel.'
+            );
+        });
+
+        it('should throw an error when server is returning an error', async () => {
+            const params: SetMarginCallLevelRequest = {
+                marginCallLevel: 5000.0,
+            };
+
+            const errorResponse = {
+                code: -1111,
+                msg: 'Server Error',
+            };
+
+            const mockError = new Error('ResponseError') as Error & {
+                response?: { status: number; data: unknown };
+            };
+            mockError.response = { status: 400, data: errorResponse };
+            const spy = jest.spyOn(client, 'setMarginCallLevel').mockRejectedValueOnce(mockError);
+            await expect(client.setMarginCallLevel(params)).rejects.toThrow('ResponseError');
             spy.mockRestore();
         });
     });

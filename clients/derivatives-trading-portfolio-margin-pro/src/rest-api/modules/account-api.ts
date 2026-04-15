@@ -22,10 +22,12 @@ import {
 import type {
     BnbTransferResponse,
     ChangeAutoRepayFuturesStatusResponse,
+    DeleteMarginCallLevelResponse,
     FundAutoCollectionResponse,
     FundCollectionByAssetResponse,
     GetAutoRepayFuturesStatusResponse,
     GetDeltaModeStatusResponse,
+    GetMarginCallLevelResponse,
     GetPortfolioMarginProAccountBalanceResponse,
     GetPortfolioMarginProAccountInfoResponse,
     GetPortfolioMarginProSpanAccountInfoResponse,
@@ -35,6 +37,7 @@ import type {
     QueryPortfolioMarginProBankruptcyLoanRepayHistoryResponse,
     QueryPortfolioMarginProNegativeBalanceInterestHistoryResponse,
     RepayFuturesNegativeBalanceResponse,
+    SetMarginCallLevelResponse,
     SwitchDeltaModeResponse,
     TransferLdusdtRwusdForPortfolioMarginResponse,
 } from '../types';
@@ -127,6 +130,35 @@ const AccountApiAxiosParamCreator = function (configuration: ConfigurationRestAP
             return {
                 endpoint: '/sapi/v1/portfolio/repay-futures-switch',
                 method: 'POST',
+                queryParams: localVarQueryParameter,
+                bodyParams: localVarBodyParameter,
+                timeUnit: _timeUnit,
+            };
+        },
+        /**
+         * Delete the margin call level for a Portfolio Margin account.
+         *
+         * Weight: 1500
+         *
+         * @summary Delete Margin Call Level (USER_DATA)
+         * @param {number | bigint} [recvWindow]
+         *
+         * @throws {RequiredError}
+         */
+        deleteMarginCallLevel: async (recvWindow?: number | bigint): Promise<RequestArgs> => {
+            const localVarQueryParameter: Record<string, unknown> = {};
+            const localVarBodyParameter: Record<string, unknown> = {};
+
+            if (recvWindow !== undefined && recvWindow !== null) {
+                localVarQueryParameter['recvWindow'] = recvWindow;
+            }
+
+            let _timeUnit: TimeUnit | undefined;
+            if ('timeUnit' in configuration) _timeUnit = configuration.timeUnit as TimeUnit;
+
+            return {
+                endpoint: '/sapi/v1/portfolio/margin-call-level',
+                method: 'DELETE',
                 queryParams: localVarQueryParameter,
                 bodyParams: localVarBodyParameter,
                 timeUnit: _timeUnit,
@@ -257,6 +289,35 @@ const AccountApiAxiosParamCreator = function (configuration: ConfigurationRestAP
 
             return {
                 endpoint: '/sapi/v1/portfolio/delta-mode',
+                method: 'GET',
+                queryParams: localVarQueryParameter,
+                bodyParams: localVarBodyParameter,
+                timeUnit: _timeUnit,
+            };
+        },
+        /**
+         * Get the margin call level for a Portfolio Margin account.
+         *
+         * Weight: 1500
+         *
+         * @summary Get Margin Call Level (USER_DATA)
+         * @param {number | bigint} [recvWindow]
+         *
+         * @throws {RequiredError}
+         */
+        getMarginCallLevel: async (recvWindow?: number | bigint): Promise<RequestArgs> => {
+            const localVarQueryParameter: Record<string, unknown> = {};
+            const localVarBodyParameter: Record<string, unknown> = {};
+
+            if (recvWindow !== undefined && recvWindow !== null) {
+                localVarQueryParameter['recvWindow'] = recvWindow;
+            }
+
+            let _timeUnit: TimeUnit | undefined;
+            if ('timeUnit' in configuration) _timeUnit = configuration.timeUnit as TimeUnit;
+
+            return {
+                endpoint: '/sapi/v1/portfolio/margin-call-level',
                 method: 'GET',
                 queryParams: localVarQueryParameter,
                 bodyParams: localVarBodyParameter,
@@ -626,6 +687,45 @@ const AccountApiAxiosParamCreator = function (configuration: ConfigurationRestAP
             };
         },
         /**
+         * Set the margin call level for a Portfolio Margin account. When the account's uniMMR drops to the specified level, a notification will be sent via email and SMS.
+         *
+         * Weight: 1500
+         *
+         * @summary Set Margin Call Level (USER_DATA)
+         * @param {number} marginCallLevel The value of marginCallLevel must be within the range [1.1, 2.0].
+         * @param {number | bigint} [recvWindow]
+         *
+         * @throws {RequiredError}
+         */
+        setMarginCallLevel: async (
+            marginCallLevel: number,
+            recvWindow?: number | bigint
+        ): Promise<RequestArgs> => {
+            // verify required parameter 'marginCallLevel' is not null or undefined
+            assertParamExists('setMarginCallLevel', 'marginCallLevel', marginCallLevel);
+
+            const localVarQueryParameter: Record<string, unknown> = {};
+            const localVarBodyParameter: Record<string, unknown> = {};
+
+            if (marginCallLevel !== undefined && marginCallLevel !== null) {
+                localVarQueryParameter['marginCallLevel'] = marginCallLevel;
+            }
+            if (recvWindow !== undefined && recvWindow !== null) {
+                localVarQueryParameter['recvWindow'] = recvWindow;
+            }
+
+            let _timeUnit: TimeUnit | undefined;
+            if ('timeUnit' in configuration) _timeUnit = configuration.timeUnit as TimeUnit;
+
+            return {
+                endpoint: '/sapi/v1/portfolio/margin-call-level',
+                method: 'POST',
+                queryParams: localVarQueryParameter,
+                bodyParams: localVarBodyParameter,
+                timeUnit: _timeUnit,
+            };
+        },
+        /**
          * Switch the Delta mode for existing PM PRO / PM RETAIL accounts.
          *
          * Weight: 1500
@@ -761,6 +861,20 @@ export interface AccountApiInterface {
         requestParameters: ChangeAutoRepayFuturesStatusRequest
     ): Promise<RestApiResponse<ChangeAutoRepayFuturesStatusResponse>>;
     /**
+     * Delete the margin call level for a Portfolio Margin account.
+     *
+     * Weight: 1500
+     *
+     * @summary Delete Margin Call Level (USER_DATA)
+     * @param {DeleteMarginCallLevelRequest} requestParameters Request parameters.
+     *
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @memberof AccountApiInterface
+     */
+    deleteMarginCallLevel(
+        requestParameters?: DeleteMarginCallLevelRequest
+    ): Promise<RestApiResponse<DeleteMarginCallLevelResponse>>;
+    /**
      * Transfers all assets from Futures Account to Margin account
      *
      * The BNB would not be collected from UM-PM account to the Portfolio Margin account.
@@ -821,6 +935,20 @@ export interface AccountApiInterface {
     getDeltaModeStatus(
         requestParameters?: GetDeltaModeStatusRequest
     ): Promise<RestApiResponse<GetDeltaModeStatusResponse>>;
+    /**
+     * Get the margin call level for a Portfolio Margin account.
+     *
+     * Weight: 1500
+     *
+     * @summary Get Margin Call Level (USER_DATA)
+     * @param {GetMarginCallLevelRequest} requestParameters Request parameters.
+     *
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @memberof AccountApiInterface
+     */
+    getMarginCallLevel(
+        requestParameters?: GetMarginCallLevelRequest
+    ): Promise<RestApiResponse<GetMarginCallLevelResponse>>;
     /**
      * Query Portfolio Margin Pro account balance
      *
@@ -957,6 +1085,20 @@ export interface AccountApiInterface {
         requestParameters?: RepayFuturesNegativeBalanceRequest
     ): Promise<RestApiResponse<RepayFuturesNegativeBalanceResponse>>;
     /**
+     * Set the margin call level for a Portfolio Margin account. When the account's uniMMR drops to the specified level, a notification will be sent via email and SMS.
+     *
+     * Weight: 1500
+     *
+     * @summary Set Margin Call Level (USER_DATA)
+     * @param {SetMarginCallLevelRequest} requestParameters Request parameters.
+     *
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @memberof AccountApiInterface
+     */
+    setMarginCallLevel(
+        requestParameters: SetMarginCallLevelRequest
+    ): Promise<RestApiResponse<SetMarginCallLevelResponse>>;
+    /**
      * Switch the Delta mode for existing PM PRO / PM RETAIL accounts.
      *
      * Weight: 1500
@@ -1034,6 +1176,19 @@ export interface ChangeAutoRepayFuturesStatusRequest {
 }
 
 /**
+ * Request parameters for deleteMarginCallLevel operation in AccountApi.
+ * @interface DeleteMarginCallLevelRequest
+ */
+export interface DeleteMarginCallLevelRequest {
+    /**
+     *
+     * @type {number | bigint}
+     * @memberof AccountApiDeleteMarginCallLevel
+     */
+    readonly recvWindow?: number | bigint;
+}
+
+/**
  * Request parameters for fundAutoCollection operation in AccountApi.
  * @interface FundAutoCollectionRequest
  */
@@ -1088,6 +1243,19 @@ export interface GetDeltaModeStatusRequest {
      *
      * @type {number | bigint}
      * @memberof AccountApiGetDeltaModeStatus
+     */
+    readonly recvWindow?: number | bigint;
+}
+
+/**
+ * Request parameters for getMarginCallLevel operation in AccountApi.
+ * @interface GetMarginCallLevelRequest
+ */
+export interface GetMarginCallLevelRequest {
+    /**
+     *
+     * @type {number | bigint}
+     * @memberof AccountApiGetMarginCallLevel
      */
     readonly recvWindow?: number | bigint;
 }
@@ -1301,6 +1469,26 @@ export interface RepayFuturesNegativeBalanceRequest {
 }
 
 /**
+ * Request parameters for setMarginCallLevel operation in AccountApi.
+ * @interface SetMarginCallLevelRequest
+ */
+export interface SetMarginCallLevelRequest {
+    /**
+     * The value of marginCallLevel must be within the range [1.1, 2.0].
+     * @type {number}
+     * @memberof AccountApiSetMarginCallLevel
+     */
+    readonly marginCallLevel: number;
+
+    /**
+     *
+     * @type {number | bigint}
+     * @memberof AccountApiSetMarginCallLevel
+     */
+    readonly recvWindow?: number | bigint;
+}
+
+/**
  * Request parameters for switchDeltaMode operation in AccountApi.
  * @interface SwitchDeltaModeRequest
  */
@@ -1432,6 +1620,35 @@ export class AccountApi implements AccountApiInterface {
     }
 
     /**
+     * Delete the margin call level for a Portfolio Margin account.
+     *
+     * Weight: 1500
+     *
+     * @summary Delete Margin Call Level (USER_DATA)
+     * @param {DeleteMarginCallLevelRequest} requestParameters Request parameters.
+     * @returns {Promise<RestApiResponse<DeleteMarginCallLevelResponse>>}
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @memberof AccountApi
+     * @see {@link https://developers.binance.com/docs/derivatives/portfolio-margin-pro/account/Delete-Margin-Call-Level Binance API Documentation}
+     */
+    public async deleteMarginCallLevel(
+        requestParameters: DeleteMarginCallLevelRequest = {}
+    ): Promise<RestApiResponse<DeleteMarginCallLevelResponse>> {
+        const localVarAxiosArgs = await this.localVarAxiosParamCreator.deleteMarginCallLevel(
+            requestParameters?.recvWindow
+        );
+        return sendRequest<DeleteMarginCallLevelResponse>(
+            this.configuration,
+            localVarAxiosArgs.endpoint,
+            localVarAxiosArgs.method,
+            localVarAxiosArgs.queryParams,
+            localVarAxiosArgs.bodyParams,
+            localVarAxiosArgs?.timeUnit,
+            { isSigned: true }
+        );
+    }
+
+    /**
      * Transfers all assets from Futures Account to Margin account
      *
      * The BNB would not be collected from UM-PM account to the Portfolio Margin account.
@@ -1543,6 +1760,35 @@ export class AccountApi implements AccountApiInterface {
             requestParameters?.recvWindow
         );
         return sendRequest<GetDeltaModeStatusResponse>(
+            this.configuration,
+            localVarAxiosArgs.endpoint,
+            localVarAxiosArgs.method,
+            localVarAxiosArgs.queryParams,
+            localVarAxiosArgs.bodyParams,
+            localVarAxiosArgs?.timeUnit,
+            { isSigned: true }
+        );
+    }
+
+    /**
+     * Get the margin call level for a Portfolio Margin account.
+     *
+     * Weight: 1500
+     *
+     * @summary Get Margin Call Level (USER_DATA)
+     * @param {GetMarginCallLevelRequest} requestParameters Request parameters.
+     * @returns {Promise<RestApiResponse<GetMarginCallLevelResponse>>}
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @memberof AccountApi
+     * @see {@link https://developers.binance.com/docs/derivatives/portfolio-margin-pro/account/Get-Margin-Call-Level Binance API Documentation}
+     */
+    public async getMarginCallLevel(
+        requestParameters: GetMarginCallLevelRequest = {}
+    ): Promise<RestApiResponse<GetMarginCallLevelResponse>> {
+        const localVarAxiosArgs = await this.localVarAxiosParamCreator.getMarginCallLevel(
+            requestParameters?.recvWindow
+        );
+        return sendRequest<GetMarginCallLevelResponse>(
             this.configuration,
             localVarAxiosArgs.endpoint,
             localVarAxiosArgs.method,
@@ -1834,6 +2080,36 @@ export class AccountApi implements AccountApiInterface {
             requestParameters?.recvWindow
         );
         return sendRequest<RepayFuturesNegativeBalanceResponse>(
+            this.configuration,
+            localVarAxiosArgs.endpoint,
+            localVarAxiosArgs.method,
+            localVarAxiosArgs.queryParams,
+            localVarAxiosArgs.bodyParams,
+            localVarAxiosArgs?.timeUnit,
+            { isSigned: true }
+        );
+    }
+
+    /**
+     * Set the margin call level for a Portfolio Margin account. When the account's uniMMR drops to the specified level, a notification will be sent via email and SMS.
+     *
+     * Weight: 1500
+     *
+     * @summary Set Margin Call Level (USER_DATA)
+     * @param {SetMarginCallLevelRequest} requestParameters Request parameters.
+     * @returns {Promise<RestApiResponse<SetMarginCallLevelResponse>>}
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @memberof AccountApi
+     * @see {@link https://developers.binance.com/docs/derivatives/portfolio-margin-pro/account/Set-Margin-Call-Level Binance API Documentation}
+     */
+    public async setMarginCallLevel(
+        requestParameters: SetMarginCallLevelRequest
+    ): Promise<RestApiResponse<SetMarginCallLevelResponse>> {
+        const localVarAxiosArgs = await this.localVarAxiosParamCreator.setMarginCallLevel(
+            requestParameters?.marginCallLevel,
+            requestParameters?.recvWindow
+        );
+        return sendRequest<SetMarginCallLevelResponse>(
             this.configuration,
             localVarAxiosArgs.endpoint,
             localVarAxiosArgs.method,
