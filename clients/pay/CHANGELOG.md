@@ -1,5 +1,25 @@
 # Changelog
 
+## 6.0.0 - 2026-04-15
+
+### Changed (3)
+
+- Update `@binance/common` library to version `2.3.12`.
+- Resolve security vulnerabilities on `axios`.
+- Modified response for `getPayTradeHistory()` (`GET /sapi/v1/pay/transactions`):
+  - `data`.items.`fundsDetail`.items.`walletAssetCost`: type `array` → `object`
+  - `data`.items.`fundsDetail`.items.`walletAssetCost`: property `2` added
+  - `data`.items.`fundsDetail`.items.`walletAssetCost`: property `1` added
+  - `data`.items.`fundsDetail`.items.`walletAssetCost`: type `array` → `object`
+  - `data`.items.`fundsDetail`.items.`walletAssetCost`: property `2` added
+  - `data`.items.`fundsDetail`.items.`walletAssetCost`: property `1` added
+  - `data`.items.`fundsDetail`.items.`walletAssetCost`: type `array` → `object`
+  - `data`.items.`fundsDetail`.items.`walletAssetCost`: property `2` added
+  - `data`.items.`fundsDetail`.items.`walletAssetCost`: property `1` added
+  - `data`.items.`fundsDetail`.items.`walletAssetCost`: type `array` → `object`
+  - `data`.items.`fundsDetail`.items.`walletAssetCost`: property `2` added
+  - `data`.items.`fundsDetail`.items.`walletAssetCost`: property `1` added
+
 ## 5.1.12 - 2026-04-07
 
 ### Changed (1)

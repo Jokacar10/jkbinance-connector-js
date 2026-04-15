@@ -16,7 +16,7 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import type { GetPayTradeHistoryResponseDataInnerFundsDetailInnerWalletAssetCostInner } from './get-pay-trade-history-response-data-inner-funds-detail-inner-wallet-asset-cost-inner';
+import type { GetPayTradeHistoryResponseDataInnerFundsDetailInnerWalletAssetCost } from './get-pay-trade-history-response-data-inner-funds-detail-inner-wallet-asset-cost';
 
 /**
  *
@@ -38,8 +38,8 @@ export interface GetPayTradeHistoryResponseDataInnerFundsDetailInner {
     amount?: string;
     /**
      *
-     * @type {Array<GetPayTradeHistoryResponseDataInnerFundsDetailInnerWalletAssetCostInner>}
+     * @type {GetPayTradeHistoryResponseDataInnerFundsDetailInnerWalletAssetCost}
      * @memberof GetPayTradeHistoryResponseDataInnerFundsDetailInner
      */
-    walletAssetCost?: Array<GetPayTradeHistoryResponseDataInnerFundsDetailInnerWalletAssetCostInner>;
+    walletAssetCost?: GetPayTradeHistoryResponseDataInnerFundsDetailInnerWalletAssetCost;
 }

@@ -16,19 +16,19 @@
 /**
  *
  * @export
- * @interface GetPayTradeHistoryResponseDataInnerFundsDetailInnerWalletAssetCostInner
+ * @interface GetPayTradeHistoryResponseDataInnerFundsDetailInnerWalletAssetCost
  */
-export interface GetPayTradeHistoryResponseDataInnerFundsDetailInnerWalletAssetCostInner {
+export interface GetPayTradeHistoryResponseDataInnerFundsDetailInnerWalletAssetCost {
     /**
      *
      * @type {string}
-     * @memberof GetPayTradeHistoryResponseDataInnerFundsDetailInnerWalletAssetCostInner
+     * @memberof GetPayTradeHistoryResponseDataInnerFundsDetailInnerWalletAssetCost
      */
     '1'?: string;
     /**
      *
      * @type {string}
-     * @memberof GetPayTradeHistoryResponseDataInnerFundsDetailInnerWalletAssetCostInner
+     * @memberof GetPayTradeHistoryResponseDataInnerFundsDetailInnerWalletAssetCost
      */
     '2'?: string;
 }

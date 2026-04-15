@@ -52,12 +52,12 @@ describe('PayApi', () => {
                                 {
                                     currency: 'USDT',
                                     amount: '1.2',
-                                    walletAssetCost: [{ '1': '0.6' }, { '2': '0.6' }],
+                                    walletAssetCost: { '1': '0.6', '2': '0.6' },
                                 },
                                 {
                                     currency: 'ETH',
                                     amount: '0.0001',
-                                    walletAssetCost: [{ '1': '0.00005' }, { '2': '0.00005' }],
+                                    walletAssetCost: { '1': '0.00005', '2': '0.00005' },
                                 },
                             ],
                             payerInfo: { name: 'Jack', type: 'USER', binanceId: '12345678' },
@@ -121,12 +121,12 @@ describe('PayApi', () => {
                                 {
                                     currency: 'USDT',
                                     amount: '1.2',
-                                    walletAssetCost: [{ '1': '0.6' }, { '2': '0.6' }],
+                                    walletAssetCost: { '1': '0.6', '2': '0.6' },
                                 },
                                 {
                                     currency: 'ETH',
                                     amount: '0.0001',
-                                    walletAssetCost: [{ '1': '0.00005' }, { '2': '0.00005' }],
+                                    walletAssetCost: { '1': '0.00005', '2': '0.00005' },
                                 },
                             ],
                             payerInfo: { name: 'Jack', type: 'USER', binanceId: '12345678' },
