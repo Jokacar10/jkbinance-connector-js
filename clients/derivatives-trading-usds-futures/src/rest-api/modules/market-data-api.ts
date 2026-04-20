@@ -103,7 +103,7 @@ const MarketDataApiAxiosParamCreator = function (configuration: ConfigurationRes
          * @param {string} pair
          * @param {BasisContractTypeEnum} contractType
          * @param {BasisPeriodEnum} period "5m","15m","30m","1h","2h","4h","6h","12h","1d"
-         * @param {number | bigint} limit Default 30,Max 500
+         * @param {number | bigint} [limit] Default 100; max 1000
          * @param {number | bigint} [startTime]
          * @param {number | bigint} [endTime]
          *
@@ -113,7 +113,7 @@ const MarketDataApiAxiosParamCreator = function (configuration: ConfigurationRes
             pair: string,
             contractType: BasisContractTypeEnum,
             period: BasisPeriodEnum,
-            limit: number | bigint,
+            limit?: number | bigint,
             startTime?: number | bigint,
             endTime?: number | bigint
         ): Promise<RequestArgs> => {
@@ -123,8 +123,6 @@ const MarketDataApiAxiosParamCreator = function (configuration: ConfigurationRes
             assertParamExists('basis', 'contractType', contractType);
             // verify required parameter 'period' is not null or undefined
             assertParamExists('basis', 'period', period);
-            // verify required parameter 'limit' is not null or undefined
-            assertParamExists('basis', 'limit', limit);
 
             const localVarQueryParameter: Record<string, unknown> = {};
             const localVarBodyParameter: Record<string, unknown> = {};
@@ -2204,11 +2202,11 @@ export interface BasisRequest {
     readonly period: BasisPeriodEnum;
 
     /**
-     * Default 30,Max 500
+     * Default 100; max 1000
      * @type {number | bigint}
      * @memberof MarketDataApiBasis
      */
-    readonly limit: number | bigint;
+    readonly limit?: number | bigint;
 
     /**
      *
@@ -2300,7 +2298,7 @@ export interface ContinuousContractKlineCandlestickDataRequest {
 
     /**
      *
-     * @type {'1m' | '3m' | '5m' | '15m' | '30m' | '1h' | '2h' | '4h' | '6h' | '8h' | '12h' | '1d' | '3d' | '1w' | '1M'}
+     * @type {'1s' | '1m' | '3m' | '5m' | '15m' | '30m' | '1h' | '2h' | '4h' | '6h' | '8h' | '12h' | '1d' | '3d' | '1w' | '1M'}
      * @memberof MarketDataApiContinuousContractKlineCandlestickData
      */
     readonly interval: ContinuousContractKlineCandlestickDataIntervalEnum;
@@ -2375,7 +2373,7 @@ export interface IndexPriceKlineCandlestickDataRequest {
 
     /**
      *
-     * @type {'1m' | '3m' | '5m' | '15m' | '30m' | '1h' | '2h' | '4h' | '6h' | '8h' | '12h' | '1d' | '3d' | '1w' | '1M'}
+     * @type {'1s' | '1m' | '3m' | '5m' | '15m' | '30m' | '1h' | '2h' | '4h' | '6h' | '8h' | '12h' | '1d' | '3d' | '1w' | '1M'}
      * @memberof MarketDataApiIndexPriceKlineCandlestickData
      */
     readonly interval: IndexPriceKlineCandlestickDataIntervalEnum;
@@ -2416,7 +2414,7 @@ export interface KlineCandlestickDataRequest {
 
     /**
      *
-     * @type {'1m' | '3m' | '5m' | '15m' | '30m' | '1h' | '2h' | '4h' | '6h' | '8h' | '12h' | '1d' | '3d' | '1w' | '1M'}
+     * @type {'1s' | '1m' | '3m' | '5m' | '15m' | '30m' | '1h' | '2h' | '4h' | '6h' | '8h' | '12h' | '1d' | '3d' | '1w' | '1M'}
      * @memberof MarketDataApiKlineCandlestickData
      */
     readonly interval: KlineCandlestickDataIntervalEnum;
@@ -2511,7 +2509,7 @@ export interface MarkPriceKlineCandlestickDataRequest {
 
     /**
      *
-     * @type {'1m' | '3m' | '5m' | '15m' | '30m' | '1h' | '2h' | '4h' | '6h' | '8h' | '12h' | '1d' | '3d' | '1w' | '1M'}
+     * @type {'1s' | '1m' | '3m' | '5m' | '15m' | '30m' | '1h' | '2h' | '4h' | '6h' | '8h' | '12h' | '1d' | '3d' | '1w' | '1M'}
      * @memberof MarketDataApiMarkPriceKlineCandlestickData
      */
     readonly interval: MarkPriceKlineCandlestickDataIntervalEnum;
@@ -2666,7 +2664,7 @@ export interface PremiumIndexKlineDataRequest {
 
     /**
      *
-     * @type {'1m' | '3m' | '5m' | '15m' | '30m' | '1h' | '2h' | '4h' | '6h' | '8h' | '12h' | '1d' | '3d' | '1w' | '1M'}
+     * @type {'1s' | '1m' | '3m' | '5m' | '15m' | '30m' | '1h' | '2h' | '4h' | '6h' | '8h' | '12h' | '1d' | '3d' | '1w' | '1M'}
      * @memberof MarketDataApiPremiumIndexKlineData
      */
     readonly interval: PremiumIndexKlineDataIntervalEnum;
@@ -4156,6 +4154,7 @@ export enum ContinuousContractKlineCandlestickDataContractTypeEnum {
 }
 
 export enum ContinuousContractKlineCandlestickDataIntervalEnum {
+    INTERVAL_1s = '1s',
     INTERVAL_1m = '1m',
     INTERVAL_3m = '3m',
     INTERVAL_5m = '5m',
@@ -4174,6 +4173,7 @@ export enum ContinuousContractKlineCandlestickDataIntervalEnum {
 }
 
 export enum IndexPriceKlineCandlestickDataIntervalEnum {
+    INTERVAL_1s = '1s',
     INTERVAL_1m = '1m',
     INTERVAL_3m = '3m',
     INTERVAL_5m = '5m',
@@ -4192,6 +4192,7 @@ export enum IndexPriceKlineCandlestickDataIntervalEnum {
 }
 
 export enum KlineCandlestickDataIntervalEnum {
+    INTERVAL_1s = '1s',
     INTERVAL_1m = '1m',
     INTERVAL_3m = '3m',
     INTERVAL_5m = '5m',
@@ -4222,6 +4223,7 @@ export enum LongShortRatioPeriodEnum {
 }
 
 export enum MarkPriceKlineCandlestickDataIntervalEnum {
+    INTERVAL_1s = '1s',
     INTERVAL_1m = '1m',
     INTERVAL_3m = '3m',
     INTERVAL_5m = '5m',
@@ -4252,6 +4254,7 @@ export enum OpenInterestStatisticsPeriodEnum {
 }
 
 export enum PremiumIndexKlineDataIntervalEnum {
+    INTERVAL_1s = '1s',
     INTERVAL_1m = '1m',
     INTERVAL_3m = '3m',
     INTERVAL_5m = '5m',

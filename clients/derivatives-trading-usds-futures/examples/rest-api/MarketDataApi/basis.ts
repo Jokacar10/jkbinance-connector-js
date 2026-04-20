@@ -17,7 +17,6 @@ async function basis() {
             pair: 'pair_example',
             contractType: DerivativesTradingUsdsFuturesRestAPI.BasisContractTypeEnum.PERPETUAL,
             period: DerivativesTradingUsdsFuturesRestAPI.BasisPeriodEnum.PERIOD_5m,
-            limit: 30,
         });
 
         const rateLimits = response.rateLimits!;

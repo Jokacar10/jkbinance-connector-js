@@ -16,7 +16,7 @@ async function klineCandlestickData() {
         const response = await client.restAPI.klineCandlestickData({
             symbol: 'symbol_example',
             interval:
-                DerivativesTradingUsdsFuturesRestAPI.KlineCandlestickDataIntervalEnum.INTERVAL_1m,
+                DerivativesTradingUsdsFuturesRestAPI.KlineCandlestickDataIntervalEnum.INTERVAL_1s,
         });
 
         const rateLimits = response.rateLimits!;

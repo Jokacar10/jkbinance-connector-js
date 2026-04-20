@@ -17,7 +17,7 @@ async function indexPriceKlineCandlestickData() {
             pair: 'pair_example',
             interval:
                 DerivativesTradingUsdsFuturesRestAPI.IndexPriceKlineCandlestickDataIntervalEnum
-                    .INTERVAL_1m,
+                    .INTERVAL_1s,
         });
 
         const rateLimits = response.rateLimits!;

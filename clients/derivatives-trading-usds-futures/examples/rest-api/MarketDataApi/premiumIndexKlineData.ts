@@ -16,7 +16,7 @@ async function premiumIndexKlineData() {
         const response = await client.restAPI.premiumIndexKlineData({
             symbol: 'symbol_example',
             interval:
-                DerivativesTradingUsdsFuturesRestAPI.PremiumIndexKlineDataIntervalEnum.INTERVAL_1m,
+                DerivativesTradingUsdsFuturesRestAPI.PremiumIndexKlineDataIntervalEnum.INTERVAL_1s,
         });
 
         const rateLimits = response.rateLimits!;

@@ -177,7 +177,6 @@ describe('MarketDataApi', () => {
                 pair: 'pair_example',
                 contractType: BasisContractTypeEnum.PERPETUAL,
                 period: BasisPeriodEnum.PERIOD_5m,
-                limit: 30,
             };
 
             mockResponse = JSONParse(
@@ -214,7 +213,7 @@ describe('MarketDataApi', () => {
                 pair: 'pair_example',
                 contractType: BasisContractTypeEnum.PERPETUAL,
                 period: BasisPeriodEnum.PERIOD_5m,
-                limit: 30,
+                limit: 100,
                 startTime: 1623319461670,
                 endTime: 1641782889000,
             };
@@ -253,7 +252,6 @@ describe('MarketDataApi', () => {
                 pair: 'pair_example',
                 contractType: BasisContractTypeEnum.PERPETUAL,
                 period: BasisPeriodEnum.PERIOD_5m,
-                limit: 30,
             };
             const params = Object.assign({ ..._params });
             delete params?.pair;
@@ -268,7 +266,6 @@ describe('MarketDataApi', () => {
                 pair: 'pair_example',
                 contractType: BasisContractTypeEnum.PERPETUAL,
                 period: BasisPeriodEnum.PERIOD_5m,
-                limit: 30,
             };
             const params = Object.assign({ ..._params });
             delete params?.contractType;
@@ -283,7 +280,6 @@ describe('MarketDataApi', () => {
                 pair: 'pair_example',
                 contractType: BasisContractTypeEnum.PERPETUAL,
                 period: BasisPeriodEnum.PERIOD_5m,
-                limit: 30,
             };
             const params = Object.assign({ ..._params });
             delete params?.period;
@@ -293,27 +289,11 @@ describe('MarketDataApi', () => {
             );
         });
 
-        it('should throw RequiredError when limit is missing', async () => {
-            const _params: BasisRequest = {
-                pair: 'pair_example',
-                contractType: BasisContractTypeEnum.PERPETUAL,
-                period: BasisPeriodEnum.PERIOD_5m,
-                limit: 30,
-            };
-            const params = Object.assign({ ..._params });
-            delete params?.limit;
-
-            await expect(client.basis(params)).rejects.toThrow(
-                'Required parameter limit was null or undefined when calling basis.'
-            );
-        });
-
         it('should throw an error when server is returning an error', async () => {
             const params: BasisRequest = {
                 pair: 'pair_example',
                 contractType: BasisContractTypeEnum.PERPETUAL,
                 period: BasisPeriodEnum.PERIOD_5m,
-                limit: 30,
             };
 
             const errorResponse = {
@@ -578,7 +558,7 @@ describe('MarketDataApi', () => {
             const params: ContinuousContractKlineCandlestickDataRequest = {
                 pair: 'pair_example',
                 contractType: ContinuousContractKlineCandlestickDataContractTypeEnum.PERPETUAL,
-                interval: ContinuousContractKlineCandlestickDataIntervalEnum.INTERVAL_1m,
+                interval: ContinuousContractKlineCandlestickDataIntervalEnum.INTERVAL_1s,
             };
 
             mockResponse = JSONParse(
@@ -620,7 +600,7 @@ describe('MarketDataApi', () => {
             const params: ContinuousContractKlineCandlestickDataRequest = {
                 pair: 'pair_example',
                 contractType: ContinuousContractKlineCandlestickDataContractTypeEnum.PERPETUAL,
-                interval: ContinuousContractKlineCandlestickDataIntervalEnum.INTERVAL_1m,
+                interval: ContinuousContractKlineCandlestickDataIntervalEnum.INTERVAL_1s,
                 startTime: 1623319461670,
                 endTime: 1641782889000,
                 limit: 100,
@@ -665,7 +645,7 @@ describe('MarketDataApi', () => {
             const _params: ContinuousContractKlineCandlestickDataRequest = {
                 pair: 'pair_example',
                 contractType: ContinuousContractKlineCandlestickDataContractTypeEnum.PERPETUAL,
-                interval: ContinuousContractKlineCandlestickDataIntervalEnum.INTERVAL_1m,
+                interval: ContinuousContractKlineCandlestickDataIntervalEnum.INTERVAL_1s,
             };
             const params = Object.assign({ ..._params });
             delete params?.pair;
@@ -679,7 +659,7 @@ describe('MarketDataApi', () => {
             const _params: ContinuousContractKlineCandlestickDataRequest = {
                 pair: 'pair_example',
                 contractType: ContinuousContractKlineCandlestickDataContractTypeEnum.PERPETUAL,
-                interval: ContinuousContractKlineCandlestickDataIntervalEnum.INTERVAL_1m,
+                interval: ContinuousContractKlineCandlestickDataIntervalEnum.INTERVAL_1s,
             };
             const params = Object.assign({ ..._params });
             delete params?.contractType;
@@ -693,7 +673,7 @@ describe('MarketDataApi', () => {
             const _params: ContinuousContractKlineCandlestickDataRequest = {
                 pair: 'pair_example',
                 contractType: ContinuousContractKlineCandlestickDataContractTypeEnum.PERPETUAL,
-                interval: ContinuousContractKlineCandlestickDataIntervalEnum.INTERVAL_1m,
+                interval: ContinuousContractKlineCandlestickDataIntervalEnum.INTERVAL_1s,
             };
             const params = Object.assign({ ..._params });
             delete params?.interval;
@@ -707,7 +687,7 @@ describe('MarketDataApi', () => {
             const params: ContinuousContractKlineCandlestickDataRequest = {
                 pair: 'pair_example',
                 contractType: ContinuousContractKlineCandlestickDataContractTypeEnum.PERPETUAL,
-                interval: ContinuousContractKlineCandlestickDataIntervalEnum.INTERVAL_1m,
+                interval: ContinuousContractKlineCandlestickDataIntervalEnum.INTERVAL_1s,
             };
 
             const errorResponse = {
@@ -989,7 +969,7 @@ describe('MarketDataApi', () => {
         it('should execute indexPriceKlineCandlestickData() successfully with required parameters only', async () => {
             const params: IndexPriceKlineCandlestickDataRequest = {
                 pair: 'pair_example',
-                interval: IndexPriceKlineCandlestickDataIntervalEnum.INTERVAL_1m,
+                interval: IndexPriceKlineCandlestickDataIntervalEnum.INTERVAL_1s,
             };
 
             mockResponse = JSONParse(
@@ -1028,7 +1008,7 @@ describe('MarketDataApi', () => {
         it('should execute indexPriceKlineCandlestickData() successfully with optional parameters', async () => {
             const params: IndexPriceKlineCandlestickDataRequest = {
                 pair: 'pair_example',
-                interval: IndexPriceKlineCandlestickDataIntervalEnum.INTERVAL_1m,
+                interval: IndexPriceKlineCandlestickDataIntervalEnum.INTERVAL_1s,
                 startTime: 1623319461670,
                 endTime: 1641782889000,
                 limit: 100,
@@ -1070,7 +1050,7 @@ describe('MarketDataApi', () => {
         it('should throw RequiredError when pair is missing', async () => {
             const _params: IndexPriceKlineCandlestickDataRequest = {
                 pair: 'pair_example',
-                interval: IndexPriceKlineCandlestickDataIntervalEnum.INTERVAL_1m,
+                interval: IndexPriceKlineCandlestickDataIntervalEnum.INTERVAL_1s,
             };
             const params = Object.assign({ ..._params });
             delete params?.pair;
@@ -1083,7 +1063,7 @@ describe('MarketDataApi', () => {
         it('should throw RequiredError when interval is missing', async () => {
             const _params: IndexPriceKlineCandlestickDataRequest = {
                 pair: 'pair_example',
-                interval: IndexPriceKlineCandlestickDataIntervalEnum.INTERVAL_1m,
+                interval: IndexPriceKlineCandlestickDataIntervalEnum.INTERVAL_1s,
             };
             const params = Object.assign({ ..._params });
             delete params?.interval;
@@ -1096,7 +1076,7 @@ describe('MarketDataApi', () => {
         it('should throw an error when server is returning an error', async () => {
             const params: IndexPriceKlineCandlestickDataRequest = {
                 pair: 'pair_example',
-                interval: IndexPriceKlineCandlestickDataIntervalEnum.INTERVAL_1m,
+                interval: IndexPriceKlineCandlestickDataIntervalEnum.INTERVAL_1s,
             };
 
             const errorResponse = {
@@ -1122,7 +1102,7 @@ describe('MarketDataApi', () => {
         it('should execute klineCandlestickData() successfully with required parameters only', async () => {
             const params: KlineCandlestickDataRequest = {
                 symbol: 'symbol_example',
-                interval: KlineCandlestickDataIntervalEnum.INTERVAL_1m,
+                interval: KlineCandlestickDataIntervalEnum.INTERVAL_1s,
             };
 
             mockResponse = JSONParse(
@@ -1161,7 +1141,7 @@ describe('MarketDataApi', () => {
         it('should execute klineCandlestickData() successfully with optional parameters', async () => {
             const params: KlineCandlestickDataRequest = {
                 symbol: 'symbol_example',
-                interval: KlineCandlestickDataIntervalEnum.INTERVAL_1m,
+                interval: KlineCandlestickDataIntervalEnum.INTERVAL_1s,
                 startTime: 1623319461670,
                 endTime: 1641782889000,
                 limit: 100,
@@ -1203,7 +1183,7 @@ describe('MarketDataApi', () => {
         it('should throw RequiredError when symbol is missing', async () => {
             const _params: KlineCandlestickDataRequest = {
                 symbol: 'symbol_example',
-                interval: KlineCandlestickDataIntervalEnum.INTERVAL_1m,
+                interval: KlineCandlestickDataIntervalEnum.INTERVAL_1s,
             };
             const params = Object.assign({ ..._params });
             delete params?.symbol;
@@ -1216,7 +1196,7 @@ describe('MarketDataApi', () => {
         it('should throw RequiredError when interval is missing', async () => {
             const _params: KlineCandlestickDataRequest = {
                 symbol: 'symbol_example',
-                interval: KlineCandlestickDataIntervalEnum.INTERVAL_1m,
+                interval: KlineCandlestickDataIntervalEnum.INTERVAL_1s,
             };
             const params = Object.assign({ ..._params });
             delete params?.interval;
@@ -1229,7 +1209,7 @@ describe('MarketDataApi', () => {
         it('should throw an error when server is returning an error', async () => {
             const params: KlineCandlestickDataRequest = {
                 symbol: 'symbol_example',
-                interval: KlineCandlestickDataIntervalEnum.INTERVAL_1m,
+                interval: KlineCandlestickDataIntervalEnum.INTERVAL_1s,
             };
 
             const errorResponse = {
@@ -1457,7 +1437,7 @@ describe('MarketDataApi', () => {
         it('should execute markPriceKlineCandlestickData() successfully with required parameters only', async () => {
             const params: MarkPriceKlineCandlestickDataRequest = {
                 symbol: 'symbol_example',
-                interval: MarkPriceKlineCandlestickDataIntervalEnum.INTERVAL_1m,
+                interval: MarkPriceKlineCandlestickDataIntervalEnum.INTERVAL_1s,
             };
 
             mockResponse = JSONParse(
@@ -1496,7 +1476,7 @@ describe('MarketDataApi', () => {
         it('should execute markPriceKlineCandlestickData() successfully with optional parameters', async () => {
             const params: MarkPriceKlineCandlestickDataRequest = {
                 symbol: 'symbol_example',
-                interval: MarkPriceKlineCandlestickDataIntervalEnum.INTERVAL_1m,
+                interval: MarkPriceKlineCandlestickDataIntervalEnum.INTERVAL_1s,
                 startTime: 1623319461670,
                 endTime: 1641782889000,
                 limit: 100,
@@ -1538,7 +1518,7 @@ describe('MarketDataApi', () => {
         it('should throw RequiredError when symbol is missing', async () => {
             const _params: MarkPriceKlineCandlestickDataRequest = {
                 symbol: 'symbol_example',
-                interval: MarkPriceKlineCandlestickDataIntervalEnum.INTERVAL_1m,
+                interval: MarkPriceKlineCandlestickDataIntervalEnum.INTERVAL_1s,
             };
             const params = Object.assign({ ..._params });
             delete params?.symbol;
@@ -1551,7 +1531,7 @@ describe('MarketDataApi', () => {
         it('should throw RequiredError when interval is missing', async () => {
             const _params: MarkPriceKlineCandlestickDataRequest = {
                 symbol: 'symbol_example',
-                interval: MarkPriceKlineCandlestickDataIntervalEnum.INTERVAL_1m,
+                interval: MarkPriceKlineCandlestickDataIntervalEnum.INTERVAL_1s,
             };
             const params = Object.assign({ ..._params });
             delete params?.interval;
@@ -1564,7 +1544,7 @@ describe('MarketDataApi', () => {
         it('should throw an error when server is returning an error', async () => {
             const params: MarkPriceKlineCandlestickDataRequest = {
                 symbol: 'symbol_example',
-                interval: MarkPriceKlineCandlestickDataIntervalEnum.INTERVAL_1m,
+                interval: MarkPriceKlineCandlestickDataIntervalEnum.INTERVAL_1s,
             };
 
             const errorResponse = {
@@ -2078,7 +2058,7 @@ describe('MarketDataApi', () => {
         it('should execute premiumIndexKlineData() successfully with required parameters only', async () => {
             const params: PremiumIndexKlineDataRequest = {
                 symbol: 'symbol_example',
-                interval: PremiumIndexKlineDataIntervalEnum.INTERVAL_1m,
+                interval: PremiumIndexKlineDataIntervalEnum.INTERVAL_1s,
             };
 
             mockResponse = JSONParse(
@@ -2117,7 +2097,7 @@ describe('MarketDataApi', () => {
         it('should execute premiumIndexKlineData() successfully with optional parameters', async () => {
             const params: PremiumIndexKlineDataRequest = {
                 symbol: 'symbol_example',
-                interval: PremiumIndexKlineDataIntervalEnum.INTERVAL_1m,
+                interval: PremiumIndexKlineDataIntervalEnum.INTERVAL_1s,
                 startTime: 1623319461670,
                 endTime: 1641782889000,
                 limit: 100,
@@ -2159,7 +2139,7 @@ describe('MarketDataApi', () => {
         it('should throw RequiredError when symbol is missing', async () => {
             const _params: PremiumIndexKlineDataRequest = {
                 symbol: 'symbol_example',
-                interval: PremiumIndexKlineDataIntervalEnum.INTERVAL_1m,
+                interval: PremiumIndexKlineDataIntervalEnum.INTERVAL_1s,
             };
             const params = Object.assign({ ..._params });
             delete params?.symbol;
@@ -2172,7 +2152,7 @@ describe('MarketDataApi', () => {
         it('should throw RequiredError when interval is missing', async () => {
             const _params: PremiumIndexKlineDataRequest = {
                 symbol: 'symbol_example',
-                interval: PremiumIndexKlineDataIntervalEnum.INTERVAL_1m,
+                interval: PremiumIndexKlineDataIntervalEnum.INTERVAL_1s,
             };
             const params = Object.assign({ ..._params });
             delete params?.interval;
@@ -2185,7 +2165,7 @@ describe('MarketDataApi', () => {
         it('should throw an error when server is returning an error', async () => {
             const params: PremiumIndexKlineDataRequest = {
                 symbol: 'symbol_example',
-                interval: PremiumIndexKlineDataIntervalEnum.INTERVAL_1m,
+                interval: PremiumIndexKlineDataIntervalEnum.INTERVAL_1s,
             };
 
             const errorResponse = {

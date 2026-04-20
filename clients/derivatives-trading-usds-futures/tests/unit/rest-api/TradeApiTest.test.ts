@@ -3530,7 +3530,6 @@ describe('TradeApi', () => {
                 algoId: 1,
                 startTime: 1623319461670,
                 endTime: 1641782889000,
-                page: 789,
                 limit: 100,
                 recvWindow: 5000,
             };

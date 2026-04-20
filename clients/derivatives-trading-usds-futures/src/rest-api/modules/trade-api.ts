@@ -1594,7 +1594,6 @@ const TradeApiAxiosParamCreator = function (configuration: ConfigurationRestAPI)
          * @param {number | bigint} [algoId]
          * @param {number | bigint} [startTime]
          * @param {number | bigint} [endTime]
-         * @param {number | bigint} [page]
          * @param {number | bigint} [limit] Default 100; max 1000
          * @param {number | bigint} [recvWindow]
          *
@@ -1605,7 +1604,6 @@ const TradeApiAxiosParamCreator = function (configuration: ConfigurationRestAPI)
             algoId?: number | bigint,
             startTime?: number | bigint,
             endTime?: number | bigint,
-            page?: number | bigint,
             limit?: number | bigint,
             recvWindow?: number | bigint
         ): Promise<RequestArgs> => {
@@ -1626,9 +1624,6 @@ const TradeApiAxiosParamCreator = function (configuration: ConfigurationRestAPI)
             }
             if (endTime !== undefined && endTime !== null) {
                 localVarQueryParameter['endTime'] = endTime;
-            }
-            if (page !== undefined && page !== null) {
-                localVarQueryParameter['page'] = page;
             }
             if (limit !== undefined && limit !== null) {
                 localVarQueryParameter['limit'] = limit;
@@ -3670,13 +3665,6 @@ export interface QueryAllAlgoOrdersRequest {
     readonly endTime?: number | bigint;
 
     /**
-     *
-     * @type {number | bigint}
-     * @memberof TradeApiQueryAllAlgoOrders
-     */
-    readonly page?: number | bigint;
-
-    /**
      * Default 100; max 1000
      * @type {number | bigint}
      * @memberof TradeApiQueryAllAlgoOrders
@@ -4997,7 +4985,6 @@ export class TradeApi implements TradeApiInterface {
             requestParameters?.algoId,
             requestParameters?.startTime,
             requestParameters?.endTime,
-            requestParameters?.page,
             requestParameters?.limit,
             requestParameters?.recvWindow
         );
