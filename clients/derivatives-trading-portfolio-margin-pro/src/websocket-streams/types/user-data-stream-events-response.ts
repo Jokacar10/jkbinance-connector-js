@@ -16,10 +16,15 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
+import type { PmProAccountUpdate } from './pm-pro-account-update';
+// May contain unused imports in some cases
+// @ts-ignore
 import type { Risklevelchange } from './risklevelchange';
 
 /**
  * @type UserDataStreamEventsResponse
  * @export
  */
-export type UserDataStreamEventsResponse = { e: 'riskLevelChange' } & Risklevelchange;
+export type UserDataStreamEventsResponse =
+    | ({ e: 'PM_PRO_ACCOUNT_UPDATE' } & PmProAccountUpdate)
+    | ({ e: 'riskLevelChange' } & Risklevelchange);

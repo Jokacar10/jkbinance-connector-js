@@ -1,5 +1,13 @@
 # Changelog
 
+## 14.0.0 - 2026-04-20
+
+### Added (1)
+
+#### WebSocket Streams
+
+- Added `PmProAccountUpdate` on `UserDataStreamEventsResponse` list.
+
 ## 13.0.0 - 2026-04-15
 
 ### Added (3)
