@@ -7,7 +7,7 @@
 [![npm version](https://badge.fury.io/js/@binance%2Fnft.svg)](https://badge.fury.io/js/@binance%2Fnft)
 [![npm Downloads](https://img.shields.io/npm/dm/@binance/nft.svg)](https://www.npmjs.com/package/@binance/nft)
 ![Node.js Version](https://img.shields.io/badge/Node.js-%3E=22.12.0-brightgreen)
-[![Known Vulnerabilities](https://snyk.io/test/github/binance/binance-connector-js/badge.svg)](https://snyk.io/test/github/binance/binance-connector-js)
+[![Socket Badge](https://socket.dev/api/badge/npm/package/@binance/nft)](https://socket.dev/npm/package/@binance/nft)
 [![Docs](https://img.shields.io/badge/docs-online-blue?style=flat-square)](https://binance.github.io/binance-connector-js/modules/_binance_nft.html)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
