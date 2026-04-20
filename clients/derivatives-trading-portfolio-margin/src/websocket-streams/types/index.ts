@@ -4,6 +4,8 @@ export * from './account-update';
 export * from './account-update-a';
 export * from './account-update-abinner';
 export * from './account-update-apinner';
+export * from './algo-update';
+export * from './algo-update-o';
 export * from './balanceupdate';
 export * from './conditional-order-trade-update';
 export * from './conditional-order-trade-update-so';

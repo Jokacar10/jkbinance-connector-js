@@ -1,5 +1,34 @@
 # Changelog
 
+## 13.0.0 - 2026-04-20
+
+### Added (7)
+
+#### REST API
+
+- `cancelAllUmAlgoOpenOrders()` (`DELETE /papi/v1/um/algo/allOpenOrders`)
+- `cancelUmAlgoOrder()` (`DELETE /papi/v1/um/algo/order`)
+- `newUmAlgoOrder()` (`POST /papi/v1/um/algo/order`)
+- `queryAllCurrentUmOpenAlgoOrders()` (`GET /papi/v1/um/algo/openAlgoOrders`)
+- `queryCurrentUmOpenAlgoOrder()` (`GET /papi/v1/um/algo/algoOrder`)
+- `queryUmAlgoOrderHistory()` (`GET /papi/v1/um/algo/allAlgoOrders`)
+
+#### WebSocket Streams
+
+- Added `AlgoUpdate` on `UserDataStreamEventsResponse` list.
+
+### Changed (7)
+
+#### REST API
+
+- Marked `cancelAllUmOpenConditionalOrders()` (`DELETE /papi/v1/um/conditional/allOpenOrders`) as deprecated.
+- Marked `cancelUmConditionalOrder()` (`DELETE /papi/v1/um/conditional/order`) as deprecated.
+- Marked `newUmConditionalOrder()` (`POST /papi/v1/um/conditional/order`) as deprecated.
+- Marked `queryAllCurrentUmOpenConditionalOrders()` (`GET /papi/v1/um/conditional/openOrders`) as deprecated.
+- Marked `queryAllUmConditionalOrders()` (`GET /papi/v1/um/conditional/allOrders`) as deprecated.
+- Marked `queryCurrentUmOpenConditionalOrder()` (`GET /papi/v1/um/conditional/openOrder`) as deprecated.
+- Marked `queryUmConditionalOrderHistory()` (`GET /papi/v1/um/conditional/orderHistory`) as deprecated.
+
 ## 12.0.0 - 2026-04-15
 
 ### Added (1)

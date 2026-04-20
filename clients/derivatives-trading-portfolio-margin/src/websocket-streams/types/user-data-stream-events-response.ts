@@ -26,6 +26,9 @@ import type { AccountConfigUpdateAc } from './account-config-update-ac';
 import type { AccountUpdate } from './account-update';
 // May contain unused imports in some cases
 // @ts-ignore
+import type { AlgoUpdate } from './algo-update';
+// May contain unused imports in some cases
+// @ts-ignore
 import type { Balanceupdate } from './balanceupdate';
 // May contain unused imports in some cases
 // @ts-ignore
@@ -65,6 +68,7 @@ import type { Risklevelchange } from './risklevelchange';
 export type UserDataStreamEventsResponse =
     | ({ e: 'ACCOUNT_CONFIG_UPDATE' } & AccountConfigUpdate)
     | ({ e: 'ACCOUNT_UPDATE' } & AccountUpdate)
+    | ({ e: 'ALGO_UPDATE' } & AlgoUpdate)
     | ({ e: 'CONDITIONAL_ORDER_TRADE_UPDATE' } & ConditionalOrderTradeUpdate)
     | ({ e: 'ORDER_TRADE_UPDATE' } & OrderTradeUpdate)
     | ({ e: 'balanceUpdate' } & Balanceupdate)

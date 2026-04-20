@@ -42,6 +42,14 @@ import {
     NewMarginOrderSideEffectTypeEnum,
     NewMarginOrderTimeInForceEnum,
     NewMarginOrderSelfTradePreventionModeEnum,
+    NewUmAlgoOrderSideEnum,
+    NewUmAlgoOrderTypeEnum,
+    NewUmAlgoOrderPositionSideEnum,
+    NewUmAlgoOrderTimeInForceEnum,
+    NewUmAlgoOrderWorkingTypeEnum,
+    NewUmAlgoOrderPriceMatchEnum,
+    NewUmAlgoOrderNewOrderRespTypeEnum,
+    NewUmAlgoOrderSelfTradePreventionModeEnum,
     NewUmConditionalOrderSideEnum,
     NewUmConditionalOrderStrategyTypeEnum,
     NewUmConditionalOrderPositionSideEnum,
@@ -62,6 +70,7 @@ import {
 import {
     CancelAllCmOpenConditionalOrdersRequest,
     CancelAllCmOpenOrdersRequest,
+    CancelAllUmAlgoOpenOrdersRequest,
     CancelAllUmOpenConditionalOrdersRequest,
     CancelAllUmOpenOrdersRequest,
     CancelCmConditionalOrderRequest,
@@ -69,6 +78,7 @@ import {
     CancelMarginAccountAllOpenOrdersOnASymbolRequest,
     CancelMarginAccountOcoOrdersRequest,
     CancelMarginAccountOrderRequest,
+    CancelUmAlgoOrderRequest,
     CancelUmConditionalOrderRequest,
     CancelUmOrderRequest,
     CmAccountTradeListRequest,
@@ -85,12 +95,14 @@ import {
     NewCmConditionalOrderRequest,
     NewCmOrderRequest,
     NewMarginOrderRequest,
+    NewUmAlgoOrderRequest,
     NewUmConditionalOrderRequest,
     NewUmOrderRequest,
     QueryAllCmConditionalOrdersRequest,
     QueryAllCmOrdersRequest,
     QueryAllCurrentCmOpenConditionalOrdersRequest,
     QueryAllCurrentCmOpenOrdersRequest,
+    QueryAllCurrentUmOpenAlgoOrdersRequest,
     QueryAllCurrentUmOpenConditionalOrdersRequest,
     QueryAllCurrentUmOpenOrdersRequest,
     QueryAllMarginAccountOrdersRequest,
@@ -102,12 +114,14 @@ import {
     QueryCurrentCmOpenConditionalOrderRequest,
     QueryCurrentCmOpenOrderRequest,
     QueryCurrentMarginOpenOrderRequest,
+    QueryCurrentUmOpenAlgoOrderRequest,
     QueryCurrentUmOpenConditionalOrderRequest,
     QueryCurrentUmOpenOrderRequest,
     QueryMarginAccountOrderRequest,
     QueryMarginAccountsAllOcoRequest,
     QueryMarginAccountsOcoRequest,
     QueryMarginAccountsOpenOcoRequest,
+    QueryUmAlgoOrderHistoryRequest,
     QueryUmConditionalOrderHistoryRequest,
     QueryUmModifyOrderHistoryRequest,
     QueryUmOrderRequest,
@@ -121,6 +135,7 @@ import {
 import type {
     CancelAllCmOpenConditionalOrdersResponse,
     CancelAllCmOpenOrdersResponse,
+    CancelAllUmAlgoOpenOrdersResponse,
     CancelAllUmOpenConditionalOrdersResponse,
     CancelAllUmOpenOrdersResponse,
     CancelCmConditionalOrderResponse,
@@ -128,6 +143,7 @@ import type {
     CancelMarginAccountAllOpenOrdersOnASymbolResponse,
     CancelMarginAccountOcoOrdersResponse,
     CancelMarginAccountOrderResponse,
+    CancelUmAlgoOrderResponse,
     CancelUmConditionalOrderResponse,
     CancelUmOrderResponse,
     CmAccountTradeListResponse,
@@ -144,12 +160,14 @@ import type {
     NewCmConditionalOrderResponse,
     NewCmOrderResponse,
     NewMarginOrderResponse,
+    NewUmAlgoOrderResponse,
     NewUmConditionalOrderResponse,
     NewUmOrderResponse,
     QueryAllCmConditionalOrdersResponse,
     QueryAllCmOrdersResponse,
     QueryAllCurrentCmOpenConditionalOrdersResponse,
     QueryAllCurrentCmOpenOrdersResponse,
+    QueryAllCurrentUmOpenAlgoOrdersResponse,
     QueryAllCurrentUmOpenConditionalOrdersResponse,
     QueryAllCurrentUmOpenOrdersResponse,
     QueryAllMarginAccountOrdersResponse,
@@ -161,12 +179,14 @@ import type {
     QueryCurrentCmOpenConditionalOrderResponse,
     QueryCurrentCmOpenOrderResponse,
     QueryCurrentMarginOpenOrderResponse,
+    QueryCurrentUmOpenAlgoOrderResponse,
     QueryCurrentUmOpenConditionalOrderResponse,
     QueryCurrentUmOpenOrderResponse,
     QueryMarginAccountOrderResponse,
     QueryMarginAccountsAllOcoResponse,
     QueryMarginAccountsOcoResponse,
     QueryMarginAccountsOpenOcoResponse,
+    QueryUmAlgoOrderHistoryResponse,
     QueryUmConditionalOrderHistoryResponse,
     QueryUmModifyOrderHistoryResponse,
     QueryUmOrderResponse,
@@ -360,6 +380,88 @@ describe('TradeApi', () => {
                 .spyOn(client, 'cancelAllCmOpenOrders')
                 .mockRejectedValueOnce(mockError);
             await expect(client.cancelAllCmOpenOrders(params)).rejects.toThrow('ResponseError');
+            spy.mockRestore();
+        });
+    });
+
+    describe('cancelAllUmAlgoOpenOrders()', () => {
+        it('should execute cancelAllUmAlgoOpenOrders() successfully with required parameters only', async () => {
+            const params: CancelAllUmAlgoOpenOrdersRequest = {
+                symbol: 'symbol_example',
+            };
+
+            mockResponse = JSONParse(
+                JSONStringify({ code: 200, msg: 'The operation of cancel all open order is done.' })
+            );
+
+            const spy = jest.spyOn(client, 'cancelAllUmAlgoOpenOrders').mockReturnValue(
+                Promise.resolve({
+                    data: () => Promise.resolve(mockResponse),
+                    status: 200,
+                    headers: {},
+                    rateLimits: [],
+                } as RestApiResponse<CancelAllUmAlgoOpenOrdersResponse>)
+            );
+            const response = await client.cancelAllUmAlgoOpenOrders(params);
+            expect(response).toBeDefined();
+            await expect(response.data()).resolves.toBe(mockResponse);
+            spy.mockRestore();
+        });
+
+        it('should execute cancelAllUmAlgoOpenOrders() successfully with optional parameters', async () => {
+            const params: CancelAllUmAlgoOpenOrdersRequest = {
+                symbol: 'symbol_example',
+                recvWindow: 5000,
+            };
+
+            mockResponse = JSONParse(
+                JSONStringify({ code: 200, msg: 'The operation of cancel all open order is done.' })
+            );
+
+            const spy = jest.spyOn(client, 'cancelAllUmAlgoOpenOrders').mockReturnValue(
+                Promise.resolve({
+                    data: () => Promise.resolve(mockResponse),
+                    status: 200,
+                    headers: {},
+                    rateLimits: [],
+                } as RestApiResponse<CancelAllUmAlgoOpenOrdersResponse>)
+            );
+            const response = await client.cancelAllUmAlgoOpenOrders(params);
+            expect(response).toBeDefined();
+            await expect(response.data()).resolves.toBe(mockResponse);
+            spy.mockRestore();
+        });
+
+        it('should throw RequiredError when symbol is missing', async () => {
+            const _params: CancelAllUmAlgoOpenOrdersRequest = {
+                symbol: 'symbol_example',
+            };
+            const params = Object.assign({ ..._params });
+            delete params?.symbol;
+
+            await expect(client.cancelAllUmAlgoOpenOrders(params)).rejects.toThrow(
+                'Required parameter symbol was null or undefined when calling cancelAllUmAlgoOpenOrders.'
+            );
+        });
+
+        it('should throw an error when server is returning an error', async () => {
+            const params: CancelAllUmAlgoOpenOrdersRequest = {
+                symbol: 'symbol_example',
+            };
+
+            const errorResponse = {
+                code: -1111,
+                msg: 'Server Error',
+            };
+
+            const mockError = new Error('ResponseError') as Error & {
+                response?: { status: number; data: unknown };
+            };
+            mockError.response = { status: 400, data: errorResponse };
+            const spy = jest
+                .spyOn(client, 'cancelAllUmAlgoOpenOrders')
+                .mockRejectedValueOnce(mockError);
+            await expect(client.cancelAllUmAlgoOpenOrders(params)).rejects.toThrow('ResponseError');
             spy.mockRestore();
         });
     });
@@ -1292,6 +1394,77 @@ describe('TradeApi', () => {
                 .spyOn(client, 'cancelMarginAccountOrder')
                 .mockRejectedValueOnce(mockError);
             await expect(client.cancelMarginAccountOrder(params)).rejects.toThrow('ResponseError');
+            spy.mockRestore();
+        });
+    });
+
+    describe('cancelUmAlgoOrder()', () => {
+        it('should execute cancelUmAlgoOrder() successfully with required parameters only', async () => {
+            mockResponse = JSONParse(
+                JSONStringify({
+                    algoId: 2146760,
+                    clientAlgoId: '6B2I9XVcJpCjqPAJ4YoFX7',
+                    code: '200',
+                    msg: 'success',
+                })
+            );
+
+            const spy = jest.spyOn(client, 'cancelUmAlgoOrder').mockReturnValue(
+                Promise.resolve({
+                    data: () => Promise.resolve(mockResponse),
+                    status: 200,
+                    headers: {},
+                    rateLimits: [],
+                } as RestApiResponse<CancelUmAlgoOrderResponse>)
+            );
+            const response = await client.cancelUmAlgoOrder();
+            expect(response).toBeDefined();
+            await expect(response.data()).resolves.toBe(mockResponse);
+            spy.mockRestore();
+        });
+
+        it('should execute cancelUmAlgoOrder() successfully with optional parameters', async () => {
+            const params: CancelUmAlgoOrderRequest = {
+                algoId: 1,
+                clientAlgoId: '1',
+                recvWindow: 5000,
+            };
+
+            mockResponse = JSONParse(
+                JSONStringify({
+                    algoId: 2146760,
+                    clientAlgoId: '6B2I9XVcJpCjqPAJ4YoFX7',
+                    code: '200',
+                    msg: 'success',
+                })
+            );
+
+            const spy = jest.spyOn(client, 'cancelUmAlgoOrder').mockReturnValue(
+                Promise.resolve({
+                    data: () => Promise.resolve(mockResponse),
+                    status: 200,
+                    headers: {},
+                    rateLimits: [],
+                } as RestApiResponse<CancelUmAlgoOrderResponse>)
+            );
+            const response = await client.cancelUmAlgoOrder(params);
+            expect(response).toBeDefined();
+            await expect(response.data()).resolves.toBe(mockResponse);
+            spy.mockRestore();
+        });
+
+        it('should throw an error when server is returning an error', async () => {
+            const errorResponse = {
+                code: -1111,
+                msg: 'Server Error',
+            };
+
+            const mockError = new Error('ResponseError') as Error & {
+                response?: { status: number; data: unknown };
+            };
+            mockError.response = { status: 400, data: errorResponse };
+            const spy = jest.spyOn(client, 'cancelUmAlgoOrder').mockRejectedValueOnce(mockError);
+            await expect(client.cancelUmAlgoOrder()).rejects.toThrow('ResponseError');
             spy.mockRestore();
         });
     });
@@ -3365,6 +3538,211 @@ describe('TradeApi', () => {
         });
     });
 
+    describe('newUmAlgoOrder()', () => {
+        it('should execute newUmAlgoOrder() successfully with required parameters only', async () => {
+            const params: NewUmAlgoOrderRequest = {
+                algoType: 'algoType_example',
+                symbol: 'symbol_example',
+                side: NewUmAlgoOrderSideEnum.BUY,
+                type: NewUmAlgoOrderTypeEnum.LIMIT,
+            };
+
+            mockResponse = JSONParse(
+                JSONStringify({
+                    algoId: 2146760,
+                    clientAlgoId: '6B2I9XVcJpCjqPAJ4YoFX7',
+                    algoType: 'CONDITIONAL',
+                    orderType: 'TAKE_PROFIT',
+                    symbol: 'BNBUSDT',
+                    side: 'SELL',
+                    positionSide: 'BOTH',
+                    timeInForce: 'GTC',
+                    quantity: '0.01',
+                    algoStatus: 'NEW',
+                    triggerPrice: '750.000',
+                    price: '750.000',
+                    icebergQuantity: null,
+                    selfTradePreventionMode: 'EXPIRE_MAKER',
+                    workingType: 'CONTRACT_PRICE',
+                    priceMatch: 'NONE',
+                    closePosition: false,
+                    priceProtect: false,
+                    reduceOnly: false,
+                    activatePrice: '',
+                    callbackRate: '',
+                    createTime: 1750485492076,
+                    updateTime: 1750485492076,
+                    triggerTime: 0,
+                    goodTillDate: 0,
+                })
+            );
+
+            const spy = jest.spyOn(client, 'newUmAlgoOrder').mockReturnValue(
+                Promise.resolve({
+                    data: () => Promise.resolve(mockResponse),
+                    status: 200,
+                    headers: {},
+                    rateLimits: [],
+                } as RestApiResponse<NewUmAlgoOrderResponse>)
+            );
+            const response = await client.newUmAlgoOrder(params);
+            expect(response).toBeDefined();
+            await expect(response.data()).resolves.toBe(mockResponse);
+            spy.mockRestore();
+        });
+
+        it('should execute newUmAlgoOrder() successfully with optional parameters', async () => {
+            const params: NewUmAlgoOrderRequest = {
+                algoType: 'algoType_example',
+                symbol: 'symbol_example',
+                side: NewUmAlgoOrderSideEnum.BUY,
+                type: NewUmAlgoOrderTypeEnum.LIMIT,
+                positionSide: NewUmAlgoOrderPositionSideEnum.BOTH,
+                timeInForce: NewUmAlgoOrderTimeInForceEnum.GTC,
+                quantity: 1.0,
+                price: 1.0,
+                triggerPrice: 1.0,
+                workingType: NewUmAlgoOrderWorkingTypeEnum.MARK_PRICE,
+                priceMatch: NewUmAlgoOrderPriceMatchEnum.NONE,
+                closePosition: 'closePosition_example',
+                priceProtect: 'false',
+                reduceOnly: 'false',
+                activatePrice: 1.0,
+                callbackRate: 1.0,
+                clientAlgoId: '1',
+                newOrderRespType: NewUmAlgoOrderNewOrderRespTypeEnum.ACK,
+                selfTradePreventionMode: NewUmAlgoOrderSelfTradePreventionModeEnum.NONE,
+                goodTillDate: 789,
+                recvWindow: 5000,
+            };
+
+            mockResponse = JSONParse(
+                JSONStringify({
+                    algoId: 2146760,
+                    clientAlgoId: '6B2I9XVcJpCjqPAJ4YoFX7',
+                    algoType: 'CONDITIONAL',
+                    orderType: 'TAKE_PROFIT',
+                    symbol: 'BNBUSDT',
+                    side: 'SELL',
+                    positionSide: 'BOTH',
+                    timeInForce: 'GTC',
+                    quantity: '0.01',
+                    algoStatus: 'NEW',
+                    triggerPrice: '750.000',
+                    price: '750.000',
+                    icebergQuantity: null,
+                    selfTradePreventionMode: 'EXPIRE_MAKER',
+                    workingType: 'CONTRACT_PRICE',
+                    priceMatch: 'NONE',
+                    closePosition: false,
+                    priceProtect: false,
+                    reduceOnly: false,
+                    activatePrice: '',
+                    callbackRate: '',
+                    createTime: 1750485492076,
+                    updateTime: 1750485492076,
+                    triggerTime: 0,
+                    goodTillDate: 0,
+                })
+            );
+
+            const spy = jest.spyOn(client, 'newUmAlgoOrder').mockReturnValue(
+                Promise.resolve({
+                    data: () => Promise.resolve(mockResponse),
+                    status: 200,
+                    headers: {},
+                    rateLimits: [],
+                } as RestApiResponse<NewUmAlgoOrderResponse>)
+            );
+            const response = await client.newUmAlgoOrder(params);
+            expect(response).toBeDefined();
+            await expect(response.data()).resolves.toBe(mockResponse);
+            spy.mockRestore();
+        });
+
+        it('should throw RequiredError when algoType is missing', async () => {
+            const _params: NewUmAlgoOrderRequest = {
+                algoType: 'algoType_example',
+                symbol: 'symbol_example',
+                side: NewUmAlgoOrderSideEnum.BUY,
+                type: NewUmAlgoOrderTypeEnum.LIMIT,
+            };
+            const params = Object.assign({ ..._params });
+            delete params?.algoType;
+
+            await expect(client.newUmAlgoOrder(params)).rejects.toThrow(
+                'Required parameter algoType was null or undefined when calling newUmAlgoOrder.'
+            );
+        });
+
+        it('should throw RequiredError when symbol is missing', async () => {
+            const _params: NewUmAlgoOrderRequest = {
+                algoType: 'algoType_example',
+                symbol: 'symbol_example',
+                side: NewUmAlgoOrderSideEnum.BUY,
+                type: NewUmAlgoOrderTypeEnum.LIMIT,
+            };
+            const params = Object.assign({ ..._params });
+            delete params?.symbol;
+
+            await expect(client.newUmAlgoOrder(params)).rejects.toThrow(
+                'Required parameter symbol was null or undefined when calling newUmAlgoOrder.'
+            );
+        });
+
+        it('should throw RequiredError when side is missing', async () => {
+            const _params: NewUmAlgoOrderRequest = {
+                algoType: 'algoType_example',
+                symbol: 'symbol_example',
+                side: NewUmAlgoOrderSideEnum.BUY,
+                type: NewUmAlgoOrderTypeEnum.LIMIT,
+            };
+            const params = Object.assign({ ..._params });
+            delete params?.side;
+
+            await expect(client.newUmAlgoOrder(params)).rejects.toThrow(
+                'Required parameter side was null or undefined when calling newUmAlgoOrder.'
+            );
+        });
+
+        it('should throw RequiredError when type is missing', async () => {
+            const _params: NewUmAlgoOrderRequest = {
+                algoType: 'algoType_example',
+                symbol: 'symbol_example',
+                side: NewUmAlgoOrderSideEnum.BUY,
+                type: NewUmAlgoOrderTypeEnum.LIMIT,
+            };
+            const params = Object.assign({ ..._params });
+            delete params?.type;
+
+            await expect(client.newUmAlgoOrder(params)).rejects.toThrow(
+                'Required parameter type was null or undefined when calling newUmAlgoOrder.'
+            );
+        });
+
+        it('should throw an error when server is returning an error', async () => {
+            const params: NewUmAlgoOrderRequest = {
+                algoType: 'algoType_example',
+                symbol: 'symbol_example',
+                side: NewUmAlgoOrderSideEnum.BUY,
+                type: NewUmAlgoOrderTypeEnum.LIMIT,
+            };
+
+            const errorResponse = {
+                code: -1111,
+                msg: 'Server Error',
+            };
+
+            const mockError = new Error('ResponseError') as Error & {
+                response?: { status: number; data: unknown };
+            };
+            mockError.response = { status: 400, data: errorResponse };
+            const spy = jest.spyOn(client, 'newUmAlgoOrder').mockRejectedValueOnce(mockError);
+            await expect(client.newUmAlgoOrder(params)).rejects.toThrow('ResponseError');
+            spy.mockRestore();
+        });
+    });
+
     describe('newUmConditionalOrder()', () => {
         it('should execute newUmConditionalOrder() successfully with required parameters only', async () => {
             const params: NewUmConditionalOrderRequest = {
@@ -4153,6 +4531,136 @@ describe('TradeApi', () => {
                 .spyOn(client, 'queryAllCurrentCmOpenOrders')
                 .mockRejectedValueOnce(mockError);
             await expect(client.queryAllCurrentCmOpenOrders()).rejects.toThrow('ResponseError');
+            spy.mockRestore();
+        });
+    });
+
+    describe('queryAllCurrentUmOpenAlgoOrders()', () => {
+        it('should execute queryAllCurrentUmOpenAlgoOrders() successfully with required parameters only', async () => {
+            mockResponse = JSONParse(
+                JSONStringify([
+                    {
+                        algoId: 2148627,
+                        clientAlgoId: 'MRumok0dkhrP4kCm12AHaB',
+                        algoType: 'CONDITIONAL',
+                        orderType: 'TAKE_PROFIT',
+                        symbol: 'BNBUSDT',
+                        side: 'SELL',
+                        positionSide: 'BOTH',
+                        timeInForce: 'GTC',
+                        quantity: '0.01',
+                        algoStatus: 'NEW',
+                        actualOrderId: '',
+                        actualPrice: '0.00000',
+                        triggerPrice: '750.000',
+                        price: '750.000',
+                        icebergQuantity: null,
+                        tpTriggerPrice: '0.000',
+                        tpPrice: '0.000',
+                        slTriggerPrice: '0.000',
+                        slPrice: '0.000',
+                        tpOrderType: '',
+                        selfTradePreventionMode: 'EXPIRE_MAKER',
+                        workingType: 'CONTRACT_PRICE',
+                        priceMatch: 'NONE',
+                        closePosition: false,
+                        priceProtect: false,
+                        reduceOnly: false,
+                        createTime: 1750514941540,
+                        updateTime: 1750514941540,
+                        triggerTime: 0,
+                        goodTillDate: 0,
+                    },
+                ])
+            );
+
+            const spy = jest.spyOn(client, 'queryAllCurrentUmOpenAlgoOrders').mockReturnValue(
+                Promise.resolve({
+                    data: () => Promise.resolve(mockResponse),
+                    status: 200,
+                    headers: {},
+                    rateLimits: [],
+                } as RestApiResponse<QueryAllCurrentUmOpenAlgoOrdersResponse>)
+            );
+            const response = await client.queryAllCurrentUmOpenAlgoOrders();
+            expect(response).toBeDefined();
+            await expect(response.data()).resolves.toBe(mockResponse);
+            spy.mockRestore();
+        });
+
+        it('should execute queryAllCurrentUmOpenAlgoOrders() successfully with optional parameters', async () => {
+            const params: QueryAllCurrentUmOpenAlgoOrdersRequest = {
+                algoType: 'algoType_example',
+                symbol: 'symbol_example',
+                algoId: 1,
+                recvWindow: 5000,
+            };
+
+            mockResponse = JSONParse(
+                JSONStringify([
+                    {
+                        algoId: 2148627,
+                        clientAlgoId: 'MRumok0dkhrP4kCm12AHaB',
+                        algoType: 'CONDITIONAL',
+                        orderType: 'TAKE_PROFIT',
+                        symbol: 'BNBUSDT',
+                        side: 'SELL',
+                        positionSide: 'BOTH',
+                        timeInForce: 'GTC',
+                        quantity: '0.01',
+                        algoStatus: 'NEW',
+                        actualOrderId: '',
+                        actualPrice: '0.00000',
+                        triggerPrice: '750.000',
+                        price: '750.000',
+                        icebergQuantity: null,
+                        tpTriggerPrice: '0.000',
+                        tpPrice: '0.000',
+                        slTriggerPrice: '0.000',
+                        slPrice: '0.000',
+                        tpOrderType: '',
+                        selfTradePreventionMode: 'EXPIRE_MAKER',
+                        workingType: 'CONTRACT_PRICE',
+                        priceMatch: 'NONE',
+                        closePosition: false,
+                        priceProtect: false,
+                        reduceOnly: false,
+                        createTime: 1750514941540,
+                        updateTime: 1750514941540,
+                        triggerTime: 0,
+                        goodTillDate: 0,
+                    },
+                ])
+            );
+
+            const spy = jest.spyOn(client, 'queryAllCurrentUmOpenAlgoOrders').mockReturnValue(
+                Promise.resolve({
+                    data: () => Promise.resolve(mockResponse),
+                    status: 200,
+                    headers: {},
+                    rateLimits: [],
+                } as RestApiResponse<QueryAllCurrentUmOpenAlgoOrdersResponse>)
+            );
+            const response = await client.queryAllCurrentUmOpenAlgoOrders(params);
+            expect(response).toBeDefined();
+            await expect(response.data()).resolves.toBe(mockResponse);
+            spy.mockRestore();
+        });
+
+        it('should throw an error when server is returning an error', async () => {
+            const errorResponse = {
+                code: -1111,
+                msg: 'Server Error',
+            };
+
+            const mockError = new Error('ResponseError') as Error & {
+                response?: { status: number; data: unknown };
+            };
+            mockError.response = { status: 400, data: errorResponse };
+            const spy = jest
+                .spyOn(client, 'queryAllCurrentUmOpenAlgoOrders')
+                .mockRejectedValueOnce(mockError);
+            await expect(client.queryAllCurrentUmOpenAlgoOrders()).rejects.toThrow('ResponseError');
             spy.mockRestore();
         });
     });
@@ -5556,6 +6064,131 @@ describe('TradeApi', () => {
         });
     });
 
+    describe('queryCurrentUmOpenAlgoOrder()', () => {
+        it('should execute queryCurrentUmOpenAlgoOrder() successfully with required parameters only', async () => {
+            mockResponse = JSONParse(
+                JSONStringify({
+                    algoId: 2146760,
+                    clientAlgoId: '6B2I9XVcJpCjqPAJ4YoFX7',
+                    algoType: 'CONDITIONAL',
+                    orderType: 'TAKE_PROFIT',
+                    symbol: 'BNBUSDT',
+                    side: 'SELL',
+                    positionSide: 'BOTH',
+                    timeInForce: 'GTC',
+                    quantity: '0.01',
+                    algoStatus: 'CANCELED',
+                    actualOrderId: '',
+                    actualPrice: '0.00000',
+                    triggerPrice: '750.000',
+                    price: '750.000',
+                    icebergQuantity: null,
+                    tpTriggerPrice: '0.000',
+                    tpPrice: '0.000',
+                    slTriggerPrice: '0.000',
+                    slPrice: '0.000',
+                    tpOrderType: '',
+                    selfTradePreventionMode: 'EXPIRE_MAKER',
+                    workingType: 'CONTRACT_PRICE',
+                    priceMatch: 'NONE',
+                    closePosition: false,
+                    priceProtect: false,
+                    reduceOnly: false,
+                    createTime: 1750485492076,
+                    updateTime: 1750514545091,
+                    triggerTime: 0,
+                    goodTillDate: 0,
+                })
+            );
+
+            const spy = jest.spyOn(client, 'queryCurrentUmOpenAlgoOrder').mockReturnValue(
+                Promise.resolve({
+                    data: () => Promise.resolve(mockResponse),
+                    status: 200,
+                    headers: {},
+                    rateLimits: [],
+                } as RestApiResponse<QueryCurrentUmOpenAlgoOrderResponse>)
+            );
+            const response = await client.queryCurrentUmOpenAlgoOrder();
+            expect(response).toBeDefined();
+            await expect(response.data()).resolves.toBe(mockResponse);
+            spy.mockRestore();
+        });
+
+        it('should execute queryCurrentUmOpenAlgoOrder() successfully with optional parameters', async () => {
+            const params: QueryCurrentUmOpenAlgoOrderRequest = {
+                algoId: 1,
+                clientAlgoId: '1',
+                recvWindow: 5000,
+            };
+
+            mockResponse = JSONParse(
+                JSONStringify({
+                    algoId: 2146760,
+                    clientAlgoId: '6B2I9XVcJpCjqPAJ4YoFX7',
+                    algoType: 'CONDITIONAL',
+                    orderType: 'TAKE_PROFIT',
+                    symbol: 'BNBUSDT',
+                    side: 'SELL',
+                    positionSide: 'BOTH',
+                    timeInForce: 'GTC',
+                    quantity: '0.01',
+                    algoStatus: 'CANCELED',
+                    actualOrderId: '',
+                    actualPrice: '0.00000',
+                    triggerPrice: '750.000',
+                    price: '750.000',
+                    icebergQuantity: null,
+                    tpTriggerPrice: '0.000',
+                    tpPrice: '0.000',
+                    slTriggerPrice: '0.000',
+                    slPrice: '0.000',
+                    tpOrderType: '',
+                    selfTradePreventionMode: 'EXPIRE_MAKER',
+                    workingType: 'CONTRACT_PRICE',
+                    priceMatch: 'NONE',
+                    closePosition: false,
+                    priceProtect: false,
+                    reduceOnly: false,
+                    createTime: 1750485492076,
+                    updateTime: 1750514545091,
+                    triggerTime: 0,
+                    goodTillDate: 0,
+                })
+            );
+
+            const spy = jest.spyOn(client, 'queryCurrentUmOpenAlgoOrder').mockReturnValue(
+                Promise.resolve({
+                    data: () => Promise.resolve(mockResponse),
+                    status: 200,
+                    headers: {},
+                    rateLimits: [],
+                } as RestApiResponse<QueryCurrentUmOpenAlgoOrderResponse>)
+            );
+            const response = await client.queryCurrentUmOpenAlgoOrder(params);
+            expect(response).toBeDefined();
+            await expect(response.data()).resolves.toBe(mockResponse);
+            spy.mockRestore();
+        });
+
+        it('should throw an error when server is returning an error', async () => {
+            const errorResponse = {
+                code: -1111,
+                msg: 'Server Error',
+            };
+
+            const mockError = new Error('ResponseError') as Error & {
+                response?: { status: number; data: unknown };
+            };
+            mockError.response = { status: 400, data: errorResponse };
+            const spy = jest
+                .spyOn(client, 'queryCurrentUmOpenAlgoOrder')
+                .mockRejectedValueOnce(mockError);
+            await expect(client.queryCurrentUmOpenAlgoOrder()).rejects.toThrow('ResponseError');
+            spy.mockRestore();
+        });
+    });
+
     describe('queryCurrentUmOpenConditionalOrder()', () => {
         it('should execute queryCurrentUmOpenConditionalOrder() successfully with required parameters only', async () => {
             const params: QueryCurrentUmOpenConditionalOrderRequest = {
@@ -6273,6 +6906,158 @@ describe('TradeApi', () => {
                 .spyOn(client, 'queryMarginAccountsOpenOco')
                 .mockRejectedValueOnce(mockError);
             await expect(client.queryMarginAccountsOpenOco()).rejects.toThrow('ResponseError');
+            spy.mockRestore();
+        });
+    });
+
+    describe('queryUmAlgoOrderHistory()', () => {
+        it('should execute queryUmAlgoOrderHistory() successfully with required parameters only', async () => {
+            const params: QueryUmAlgoOrderHistoryRequest = {
+                symbol: 'symbol_example',
+            };
+
+            mockResponse = JSONParse(
+                JSONStringify([
+                    {
+                        algoId: 2146760,
+                        clientAlgoId: '6B2I9XVcJpCjqPAJ4YoFX7',
+                        algoType: 'CONDITIONAL',
+                        orderType: 'TAKE_PROFIT',
+                        symbol: 'BNBUSDT',
+                        side: 'SELL',
+                        positionSide: 'BOTH',
+                        timeInForce: 'GTC',
+                        quantity: '0.01',
+                        algoStatus: 'CANCELED',
+                        actualOrderId: '',
+                        actualPrice: '0.00000',
+                        triggerPrice: '750.000',
+                        price: '750.000',
+                        icebergQuantity: null,
+                        tpTriggerPrice: '0.000',
+                        tpPrice: '0.000',
+                        slTriggerPrice: '0.000',
+                        slPrice: '0.000',
+                        tpOrderType: '',
+                        selfTradePreventionMode: 'EXPIRE_MAKER',
+                        workingType: 'CONTRACT_PRICE',
+                        priceMatch: 'NONE',
+                        closePosition: false,
+                        priceProtect: false,
+                        reduceOnly: false,
+                        createTime: 1750485492076,
+                        updateTime: 1750514545091,
+                        triggerTime: 0,
+                        goodTillDate: 0,
+                    },
+                ])
+            );
+
+            const spy = jest.spyOn(client, 'queryUmAlgoOrderHistory').mockReturnValue(
+                Promise.resolve({
+                    data: () => Promise.resolve(mockResponse),
+                    status: 200,
+                    headers: {},
+                    rateLimits: [],
+                } as RestApiResponse<QueryUmAlgoOrderHistoryResponse>)
+            );
+            const response = await client.queryUmAlgoOrderHistory(params);
+            expect(response).toBeDefined();
+            await expect(response.data()).resolves.toBe(mockResponse);
+            spy.mockRestore();
+        });
+
+        it('should execute queryUmAlgoOrderHistory() successfully with optional parameters', async () => {
+            const params: QueryUmAlgoOrderHistoryRequest = {
+                symbol: 'symbol_example',
+                algoId: 1,
+                startTime: 1623319461670,
+                endTime: 1641782889000,
+                limit: 100,
+                recvWindow: 5000,
+            };
+
+            mockResponse = JSONParse(
+                JSONStringify([
+                    {
+                        algoId: 2146760,
+                        clientAlgoId: '6B2I9XVcJpCjqPAJ4YoFX7',
+                        algoType: 'CONDITIONAL',
+                        orderType: 'TAKE_PROFIT',
+                        symbol: 'BNBUSDT',
+                        side: 'SELL',
+                        positionSide: 'BOTH',
+                        timeInForce: 'GTC',
+                        quantity: '0.01',
+                        algoStatus: 'CANCELED',
+                        actualOrderId: '',
+                        actualPrice: '0.00000',
+                        triggerPrice: '750.000',
+                        price: '750.000',
+                        icebergQuantity: null,
+                        tpTriggerPrice: '0.000',
+                        tpPrice: '0.000',
+                        slTriggerPrice: '0.000',
+                        slPrice: '0.000',
+                        tpOrderType: '',
+                        selfTradePreventionMode: 'EXPIRE_MAKER',
+                        workingType: 'CONTRACT_PRICE',
+                        priceMatch: 'NONE',
+                        closePosition: false,
+                        priceProtect: false,
+                        reduceOnly: false,
+                        createTime: 1750485492076,
+                        updateTime: 1750514545091,
+                        triggerTime: 0,
+                        goodTillDate: 0,
+                    },
+                ])
+            );
+
+            const spy = jest.spyOn(client, 'queryUmAlgoOrderHistory').mockReturnValue(
+                Promise.resolve({
+                    data: () => Promise.resolve(mockResponse),
+                    status: 200,
+                    headers: {},
+                    rateLimits: [],
+                } as RestApiResponse<QueryUmAlgoOrderHistoryResponse>)
+            );
+            const response = await client.queryUmAlgoOrderHistory(params);
+            expect(response).toBeDefined();
+            await expect(response.data()).resolves.toBe(mockResponse);
+            spy.mockRestore();
+        });
+
+        it('should throw RequiredError when symbol is missing', async () => {
+            const _params: QueryUmAlgoOrderHistoryRequest = {
+                symbol: 'symbol_example',
+            };
+            const params = Object.assign({ ..._params });
+            delete params?.symbol;
+
+            await expect(client.queryUmAlgoOrderHistory(params)).rejects.toThrow(
+                'Required parameter symbol was null or undefined when calling queryUmAlgoOrderHistory.'
+            );
+        });
+
+        it('should throw an error when server is returning an error', async () => {
+            const params: QueryUmAlgoOrderHistoryRequest = {
+                symbol: 'symbol_example',
+            };
+
+            const errorResponse = {
+                code: -1111,
+                msg: 'Server Error',
+            };
+
+            const mockError = new Error('ResponseError') as Error & {
+                response?: { status: number; data: unknown };
+            };
+            mockError.response = { status: 400, data: errorResponse };
+            const spy = jest
+                .spyOn(client, 'queryUmAlgoOrderHistory')
+                .mockRejectedValueOnce(mockError);
+            await expect(client.queryUmAlgoOrderHistory(params)).rejects.toThrow('ResponseError');
             spy.mockRestore();
         });
     });

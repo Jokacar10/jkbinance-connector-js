@@ -22,6 +22,7 @@ import {
 import type {
     CancelAllCmOpenConditionalOrdersResponse,
     CancelAllCmOpenOrdersResponse,
+    CancelAllUmAlgoOpenOrdersResponse,
     CancelAllUmOpenConditionalOrdersResponse,
     CancelAllUmOpenOrdersResponse,
     CancelCmConditionalOrderResponse,
@@ -29,6 +30,7 @@ import type {
     CancelMarginAccountAllOpenOrdersOnASymbolResponse,
     CancelMarginAccountOcoOrdersResponse,
     CancelMarginAccountOrderResponse,
+    CancelUmAlgoOrderResponse,
     CancelUmConditionalOrderResponse,
     CancelUmOrderResponse,
     CmAccountTradeListResponse,
@@ -45,12 +47,14 @@ import type {
     NewCmConditionalOrderResponse,
     NewCmOrderResponse,
     NewMarginOrderResponse,
+    NewUmAlgoOrderResponse,
     NewUmConditionalOrderResponse,
     NewUmOrderResponse,
     QueryAllCmConditionalOrdersResponse,
     QueryAllCmOrdersResponse,
     QueryAllCurrentCmOpenConditionalOrdersResponse,
     QueryAllCurrentCmOpenOrdersResponse,
+    QueryAllCurrentUmOpenAlgoOrdersResponse,
     QueryAllCurrentUmOpenConditionalOrdersResponse,
     QueryAllCurrentUmOpenOrdersResponse,
     QueryAllMarginAccountOrdersResponse,
@@ -62,12 +66,14 @@ import type {
     QueryCurrentCmOpenConditionalOrderResponse,
     QueryCurrentCmOpenOrderResponse,
     QueryCurrentMarginOpenOrderResponse,
+    QueryCurrentUmOpenAlgoOrderResponse,
     QueryCurrentUmOpenConditionalOrderResponse,
     QueryCurrentUmOpenOrderResponse,
     QueryMarginAccountOrderResponse,
     QueryMarginAccountsAllOcoResponse,
     QueryMarginAccountsOcoResponse,
     QueryMarginAccountsOpenOcoResponse,
+    QueryUmAlgoOrderHistoryResponse,
     QueryUmConditionalOrderHistoryResponse,
     QueryUmModifyOrderHistoryResponse,
     QueryUmOrderResponse,
@@ -163,14 +169,54 @@ const TradeApiAxiosParamCreator = function (configuration: ConfigurationRestAPI)
             };
         },
         /**
+         * Cancel All UM Algo Open Orders
+         *
+         * Weight: 1
+         *
+         * @summary Cancel All UM Algo Open Orders (TRADE)
+         * @param {string} symbol
+         * @param {number | bigint} [recvWindow]
+         *
+         * @throws {RequiredError}
+         */
+        cancelAllUmAlgoOpenOrders: async (
+            symbol: string,
+            recvWindow?: number | bigint
+        ): Promise<RequestArgs> => {
+            // verify required parameter 'symbol' is not null or undefined
+            assertParamExists('cancelAllUmAlgoOpenOrders', 'symbol', symbol);
+
+            const localVarQueryParameter: Record<string, unknown> = {};
+            const localVarBodyParameter: Record<string, unknown> = {};
+
+            if (symbol !== undefined && symbol !== null) {
+                localVarQueryParameter['symbol'] = symbol;
+            }
+            if (recvWindow !== undefined && recvWindow !== null) {
+                localVarQueryParameter['recvWindow'] = recvWindow;
+            }
+
+            let _timeUnit: TimeUnit | undefined;
+            if ('timeUnit' in configuration) _timeUnit = configuration.timeUnit as TimeUnit;
+
+            return {
+                endpoint: '/papi/v1/um/algo/allOpenOrders',
+                method: 'DELETE',
+                queryParams: localVarQueryParameter,
+                bodyParams: localVarBodyParameter,
+                timeUnit: _timeUnit,
+            };
+        },
+        /**
          * Cancel All UM Open Conditional Orders
          *
          * Weight: 1
          *
-         * @summary Cancel All UM Open Conditional Orders (TRADE)
+         * @summary Cancel All UM Open Conditional Orders
          * @param {string} symbol
          * @param {number | bigint} [recvWindow]
          *
+         * @deprecated
          * @throws {RequiredError}
          */
         cancelAllUmOpenConditionalOrders: async (
@@ -494,18 +540,62 @@ const TradeApiAxiosParamCreator = function (configuration: ConfigurationRestAPI)
             };
         },
         /**
+         * Cancel an active UM algo order.
+         *
+         * Either `algoId` or `clientAlgoId` must be sent.
+         *
+         * Weight: 1
+         *
+         * @summary Cancel UM Algo Order (TRADE)
+         * @param {number | bigint} [algoId]
+         * @param {string} [clientAlgoId]
+         * @param {number | bigint} [recvWindow]
+         *
+         * @throws {RequiredError}
+         */
+        cancelUmAlgoOrder: async (
+            algoId?: number | bigint,
+            clientAlgoId?: string,
+            recvWindow?: number | bigint
+        ): Promise<RequestArgs> => {
+            const localVarQueryParameter: Record<string, unknown> = {};
+            const localVarBodyParameter: Record<string, unknown> = {};
+
+            if (algoId !== undefined && algoId !== null) {
+                localVarQueryParameter['algoId'] = algoId;
+            }
+            if (clientAlgoId !== undefined && clientAlgoId !== null) {
+                localVarQueryParameter['clientAlgoId'] = clientAlgoId;
+            }
+            if (recvWindow !== undefined && recvWindow !== null) {
+                localVarQueryParameter['recvWindow'] = recvWindow;
+            }
+
+            let _timeUnit: TimeUnit | undefined;
+            if ('timeUnit' in configuration) _timeUnit = configuration.timeUnit as TimeUnit;
+
+            return {
+                endpoint: '/papi/v1/um/algo/order',
+                method: 'DELETE',
+                queryParams: localVarQueryParameter,
+                bodyParams: localVarBodyParameter,
+                timeUnit: _timeUnit,
+            };
+        },
+        /**
          * Cancel UM Conditional Order
          *
          * Either `strategyId` or `newClientStrategyId` must be sent.
          *
          * Weight: 1
          *
-         * @summary Cancel UM Conditional Order(TRADE)
+         * @summary Cancel UM Conditional Order
          * @param {string} symbol
          * @param {number | bigint} [strategyId]
          * @param {string} [newClientStrategyId]
          * @param {number | bigint} [recvWindow]
          *
+         * @deprecated
          * @throws {RequiredError}
          */
         cancelUmConditionalOrder: async (
@@ -1601,6 +1691,178 @@ const TradeApiAxiosParamCreator = function (configuration: ConfigurationRestAPI)
         /**
          * Place new UM conditional order
          *
+         * Algo order with type `STOP`,  parameter `timeInForce` can be sent ( default `GTC`).
+         * Algo order with type `TAKE_PROFIT`,  parameter `timeInForce` can be sent ( default `GTC`).
+         * Condition orders will be triggered when:
+         *
+         * If parameter`priceProtect`is sent as true:
+         * when price reaches the `triggerPrice` , the difference rate between "MARK_PRICE" and "CONTRACT_PRICE" cannot be larger than the "triggerProtect" of the symbol
+         * "triggerProtect" of a symbol can be got from `GET /fapi/v1/exchangeInfo`
+         *
+         * `STOP`, `STOP_MARKET`:
+         * BUY: latest price ("MARK_PRICE" or "CONTRACT_PRICE") >= `triggerPrice`
+         * SELL: latest price ("MARK_PRICE" or "CONTRACT_PRICE") <= `triggerPrice`
+         * `TAKE_PROFIT`, `TAKE_PROFIT_MARKET`:
+         * BUY: latest price ("MARK_PRICE" or "CONTRACT_PRICE") <= `triggerPrice`
+         * SELL: latest price ("MARK_PRICE" or "CONTRACT_PRICE") >= `triggerPrice`
+         * `TRAILING_STOP_MARKET`:
+         * BUY: the lowest price after order placed <= `activatePrice`, and the latest price >= the lowest price * (1 + `callbackRate`)
+         * SELL: the highest price after order placed >= `activatePrice`, and the latest price <= the highest price * (1 - `callbackRate`)
+         *
+         * For `TRAILING_STOP_MARKET`, if you got such error code.
+         * ``{"code": -2021, "msg": "Order would immediately trigger."}``
+         * means that the parameters you send do not meet the following requirements:
+         * BUY: `activatePrice` should be smaller than latest price.
+         * SELL: `activatePrice` should be larger than latest price.
+         *
+         * `STOP_MARKET`, `TAKE_PROFIT_MARKET` with `closePosition`=`true`:
+         * Follow the same rules for condition orders.
+         * If triggered, **close all** current long position( if `SELL`) or current short position( if `BUY`).
+         * Cannot be used with `quantity` paremeter
+         * Cannot be used with `reduceOnly` parameter
+         * In Hedge Mode,cannot be used with `BUY` orders in `LONG` position side. and cannot be used with `SELL` orders in `SHORT` position side
+         * `selfTradePreventionMode` is only effective when `timeInForce` set to `IOC` or `GTC` or `GTD`.
+         *
+         * Weight: 1
+         *
+         * @summary New UM Algo Order (TRADE)
+         * @param {string} algoType Only support `CONDITIONAL`
+         * @param {string} symbol
+         * @param {NewUmAlgoOrderSideEnum} side
+         * @param {NewUmAlgoOrderTypeEnum} type `LIMIT`, `MARKET`
+         * @param {NewUmAlgoOrderPositionSideEnum} [positionSide] Default `BOTH` for One-way Mode ; `LONG` or `SHORT` for Hedge Mode. It must be sent in Hedge Mode.
+         * @param {NewUmAlgoOrderTimeInForceEnum} [timeInForce]
+         * @param {number} [quantity]
+         * @param {number} [price]
+         * @param {number} [triggerPrice]
+         * @param {NewUmAlgoOrderWorkingTypeEnum} [workingType] stopPrice triggered by: "MARK_PRICE", "CONTRACT_PRICE". Default "CONTRACT_PRICE"
+         * @param {NewUmAlgoOrderPriceMatchEnum} [priceMatch] only avaliable for `LIMIT`/`STOP`/`TAKE_PROFIT` order; can be set to `OPPONENT`/ `OPPONENT_5`/ `OPPONENT_10`/ `OPPONENT_20`: /`QUEUE`/ `QUEUE_5`/ `QUEUE_10`/ `QUEUE_20`; Can't be passed together with `price`
+         * @param {string} [closePosition] true, false; Close-All, used with `STOP_MARKET` or `TAKE_PROFIT_MARKET`.
+         * @param {string} [priceProtect] "TRUE" or "FALSE", default "FALSE". Used with `STOP/STOP_MARKET` or `TAKE_PROFIT/TAKE_PROFIT_MARKET` orders
+         * @param {string} [reduceOnly] "true" or "false". default "false". Cannot be sent in Hedge Mode .
+         * @param {number} [activatePrice] Used with `TRAILING_STOP_MARKET` orders, default as the latest price(supporting different `workingType`)
+         * @param {number} [callbackRate] Used with `TRAILING_STOP_MARKET` orders, min 0.1, max 5 where 1 for 1%
+         * @param {string} [clientAlgoId]
+         * @param {NewUmAlgoOrderNewOrderRespTypeEnum} [newOrderRespType] "ACK", "RESULT", default "ACK"
+         * @param {NewUmAlgoOrderSelfTradePreventionModeEnum} [selfTradePreventionMode] `NONE`:No STP / `EXPIRE_TAKER`:expire taker order when STP triggers/ `EXPIRE_MAKER`:expire taker order when STP triggers/ `EXPIRE_BOTH`:expire both orders when STP triggers
+         * @param {number | bigint} [goodTillDate] order cancel time for timeInForce `GTD`, mandatory when `timeInforce` set to `GTD`; order the timestamp only retains second-level precision, ms part will be ignored; The goodTillDate timestamp must be greater than the current time plus 600 seconds and smaller than 253402300799000Mode. It must be sent in Hedge Mode.
+         * @param {number | bigint} [recvWindow]
+         *
+         * @throws {RequiredError}
+         */
+        newUmAlgoOrder: async (
+            algoType: string,
+            symbol: string,
+            side: NewUmAlgoOrderSideEnum,
+            type: NewUmAlgoOrderTypeEnum,
+            positionSide?: NewUmAlgoOrderPositionSideEnum,
+            timeInForce?: NewUmAlgoOrderTimeInForceEnum,
+            quantity?: number,
+            price?: number,
+            triggerPrice?: number,
+            workingType?: NewUmAlgoOrderWorkingTypeEnum,
+            priceMatch?: NewUmAlgoOrderPriceMatchEnum,
+            closePosition?: string,
+            priceProtect?: string,
+            reduceOnly?: string,
+            activatePrice?: number,
+            callbackRate?: number,
+            clientAlgoId?: string,
+            newOrderRespType?: NewUmAlgoOrderNewOrderRespTypeEnum,
+            selfTradePreventionMode?: NewUmAlgoOrderSelfTradePreventionModeEnum,
+            goodTillDate?: number | bigint,
+            recvWindow?: number | bigint
+        ): Promise<RequestArgs> => {
+            // verify required parameter 'algoType' is not null or undefined
+            assertParamExists('newUmAlgoOrder', 'algoType', algoType);
+            // verify required parameter 'symbol' is not null or undefined
+            assertParamExists('newUmAlgoOrder', 'symbol', symbol);
+            // verify required parameter 'side' is not null or undefined
+            assertParamExists('newUmAlgoOrder', 'side', side);
+            // verify required parameter 'type' is not null or undefined
+            assertParamExists('newUmAlgoOrder', 'type', type);
+
+            const localVarQueryParameter: Record<string, unknown> = {};
+            const localVarBodyParameter: Record<string, unknown> = {};
+
+            if (algoType !== undefined && algoType !== null) {
+                localVarQueryParameter['algoType'] = algoType;
+            }
+            if (symbol !== undefined && symbol !== null) {
+                localVarQueryParameter['symbol'] = symbol;
+            }
+            if (side !== undefined && side !== null) {
+                localVarQueryParameter['side'] = side;
+            }
+            if (positionSide !== undefined && positionSide !== null) {
+                localVarQueryParameter['positionSide'] = positionSide;
+            }
+            if (type !== undefined && type !== null) {
+                localVarQueryParameter['type'] = type;
+            }
+            if (timeInForce !== undefined && timeInForce !== null) {
+                localVarQueryParameter['timeInForce'] = timeInForce;
+            }
+            if (quantity !== undefined && quantity !== null) {
+                localVarQueryParameter['quantity'] = quantity;
+            }
+            if (price !== undefined && price !== null) {
+                localVarQueryParameter['price'] = price;
+            }
+            if (triggerPrice !== undefined && triggerPrice !== null) {
+                localVarQueryParameter['triggerPrice'] = triggerPrice;
+            }
+            if (workingType !== undefined && workingType !== null) {
+                localVarQueryParameter['workingType'] = workingType;
+            }
+            if (priceMatch !== undefined && priceMatch !== null) {
+                localVarQueryParameter['priceMatch'] = priceMatch;
+            }
+            if (closePosition !== undefined && closePosition !== null) {
+                localVarQueryParameter['closePosition'] = closePosition;
+            }
+            if (priceProtect !== undefined && priceProtect !== null) {
+                localVarQueryParameter['priceProtect'] = priceProtect;
+            }
+            if (reduceOnly !== undefined && reduceOnly !== null) {
+                localVarQueryParameter['reduceOnly'] = reduceOnly;
+            }
+            if (activatePrice !== undefined && activatePrice !== null) {
+                localVarQueryParameter['activatePrice'] = activatePrice;
+            }
+            if (callbackRate !== undefined && callbackRate !== null) {
+                localVarQueryParameter['callbackRate'] = callbackRate;
+            }
+            if (clientAlgoId !== undefined && clientAlgoId !== null) {
+                localVarQueryParameter['clientAlgoId'] = clientAlgoId;
+            }
+            if (newOrderRespType !== undefined && newOrderRespType !== null) {
+                localVarQueryParameter['newOrderRespType'] = newOrderRespType;
+            }
+            if (selfTradePreventionMode !== undefined && selfTradePreventionMode !== null) {
+                localVarQueryParameter['selfTradePreventionMode'] = selfTradePreventionMode;
+            }
+            if (goodTillDate !== undefined && goodTillDate !== null) {
+                localVarQueryParameter['goodTillDate'] = goodTillDate;
+            }
+            if (recvWindow !== undefined && recvWindow !== null) {
+                localVarQueryParameter['recvWindow'] = recvWindow;
+            }
+
+            let _timeUnit: TimeUnit | undefined;
+            if ('timeUnit' in configuration) _timeUnit = configuration.timeUnit as TimeUnit;
+
+            return {
+                endpoint: '/papi/v1/um/algo/order',
+                method: 'POST',
+                queryParams: localVarQueryParameter,
+                bodyParams: localVarBodyParameter,
+                timeUnit: _timeUnit,
+            };
+        },
+        /**
+         * Place new UM conditional order
+         *
          * Order with type `STOP/TAKE_PROFIT`, parameter `timeInForce` can be sent ( default `GTC`).
          * Condition orders will be triggered when:
          * `STOP`, `STOP_MARKET`:
@@ -1630,7 +1892,7 @@ const TradeApiAxiosParamCreator = function (configuration: ConfigurationRestAPI)
          *
          * Weight: 1
          *
-         * @summary New UM Conditional Order (TRADE)
+         * @summary New UM Conditional Order
          * @param {string} symbol
          * @param {NewUmConditionalOrderSideEnum} side
          * @param {NewUmConditionalOrderStrategyTypeEnum} strategyType "STOP", "STOP_MARKET", "TAKE_PROFIT", "TAKE_PROFIT_MARKET", and "TRAILING_STOP_MARKET"
@@ -1650,6 +1912,7 @@ const TradeApiAxiosParamCreator = function (configuration: ConfigurationRestAPI)
          * @param {number | bigint} [goodTillDate] order cancel time for timeInForce `GTD`, mandatory when `timeInforce` set to `GTD`; order the timestamp only retains second-level precision, ms part will be ignored; The goodTillDate timestamp must be greater than the current time plus 600 seconds and smaller than 253402300799000Mode. It must be sent in Hedge Mode.
          * @param {number | bigint} [recvWindow]
          *
+         * @deprecated
          * @throws {RequiredError}
          */
         newUmConditionalOrder: async (
@@ -2073,6 +2336,55 @@ const TradeApiAxiosParamCreator = function (configuration: ConfigurationRestAPI)
             };
         },
         /**
+         * Get all UM open algo orders on a symbol.
+         *
+         * If the symbol is not sent, orders for all symbols will be returned in an array.
+         *
+         * Weight: 1 for a single symbol; 40 when the symbol parameter is omitted
+         * Careful when accessing this with no symbol.
+         *
+         * @summary Query All Current UM Open Algo Orders (USER_DATA)
+         * @param {string} [algoType]
+         * @param {string} [symbol]
+         * @param {number | bigint} [algoId]
+         * @param {number | bigint} [recvWindow]
+         *
+         * @throws {RequiredError}
+         */
+        queryAllCurrentUmOpenAlgoOrders: async (
+            algoType?: string,
+            symbol?: string,
+            algoId?: number | bigint,
+            recvWindow?: number | bigint
+        ): Promise<RequestArgs> => {
+            const localVarQueryParameter: Record<string, unknown> = {};
+            const localVarBodyParameter: Record<string, unknown> = {};
+
+            if (algoType !== undefined && algoType !== null) {
+                localVarQueryParameter['algoType'] = algoType;
+            }
+            if (symbol !== undefined && symbol !== null) {
+                localVarQueryParameter['symbol'] = symbol;
+            }
+            if (algoId !== undefined && algoId !== null) {
+                localVarQueryParameter['algoId'] = algoId;
+            }
+            if (recvWindow !== undefined && recvWindow !== null) {
+                localVarQueryParameter['recvWindow'] = recvWindow;
+            }
+
+            let _timeUnit: TimeUnit | undefined;
+            if ('timeUnit' in configuration) _timeUnit = configuration.timeUnit as TimeUnit;
+
+            return {
+                endpoint: '/papi/v1/um/algo/openAlgoOrders',
+                method: 'GET',
+                queryParams: localVarQueryParameter,
+                bodyParams: localVarBodyParameter,
+                timeUnit: _timeUnit,
+            };
+        },
+        /**
          * Get all open conditional orders on a symbol.
          *
          * If the symbol is not sent, orders for all symbols will be returned in an array.
@@ -2080,10 +2392,11 @@ const TradeApiAxiosParamCreator = function (configuration: ConfigurationRestAPI)
          * Weight: 1 for a single symbol; 40 when the symbol parameter is omitted
          * Careful when accessing this with no symbol.
          *
-         * @summary Query All Current UM Open Conditional Orders(USER_DATA)
+         * @summary Query All Current UM Open Conditional Orders
          * @param {string} [symbol]
          * @param {number | bigint} [recvWindow]
          *
+         * @deprecated
          * @throws {RequiredError}
          */
         queryAllCurrentUmOpenConditionalOrders: async (
@@ -2220,7 +2533,7 @@ const TradeApiAxiosParamCreator = function (configuration: ConfigurationRestAPI)
          *
          * Weight: 1 for a single symbol; 40 when the symbol parameter is omitted
          *
-         * @summary Query All UM Conditional Orders(USER_DATA)
+         * @summary Query All UM Conditional Orders
          * @param {string} [symbol]
          * @param {number | bigint} [strategyId]
          * @param {number | bigint} [startTime] Timestamp in ms to get funding from INCLUSIVE.
@@ -2228,6 +2541,7 @@ const TradeApiAxiosParamCreator = function (configuration: ConfigurationRestAPI)
          * @param {number | bigint} [limit] Default 100; max 1000
          * @param {number | bigint} [recvWindow]
          *
+         * @deprecated
          * @throws {RequiredError}
          */
         queryAllUmConditionalOrders: async (
@@ -2659,6 +2973,54 @@ const TradeApiAxiosParamCreator = function (configuration: ConfigurationRestAPI)
             };
         },
         /**
+         * Check an UM algo order's status.
+         *
+         * These orders will not be found:
+         * order status is `CANCELED` or `EXPIRED` **AND** order has NO filled trade **AND** created time + 3 days < current time
+         * order create time + 90 days < current time
+         *
+         * Either `algoId` or `clientAlgoId` must be sent.
+         * `algoId` is self-increment for each specific `symbol`
+         *
+         * Weight: 1
+         *
+         * @summary Query Current UM Open Algo Order (USER_DATA)
+         * @param {number | bigint} [algoId]
+         * @param {string} [clientAlgoId]
+         * @param {number | bigint} [recvWindow]
+         *
+         * @throws {RequiredError}
+         */
+        queryCurrentUmOpenAlgoOrder: async (
+            algoId?: number | bigint,
+            clientAlgoId?: string,
+            recvWindow?: number | bigint
+        ): Promise<RequestArgs> => {
+            const localVarQueryParameter: Record<string, unknown> = {};
+            const localVarBodyParameter: Record<string, unknown> = {};
+
+            if (algoId !== undefined && algoId !== null) {
+                localVarQueryParameter['algoId'] = algoId;
+            }
+            if (clientAlgoId !== undefined && clientAlgoId !== null) {
+                localVarQueryParameter['clientAlgoId'] = clientAlgoId;
+            }
+            if (recvWindow !== undefined && recvWindow !== null) {
+                localVarQueryParameter['recvWindow'] = recvWindow;
+            }
+
+            let _timeUnit: TimeUnit | undefined;
+            if ('timeUnit' in configuration) _timeUnit = configuration.timeUnit as TimeUnit;
+
+            return {
+                endpoint: '/papi/v1/um/algo/algoOrder',
+                method: 'GET',
+                queryParams: localVarQueryParameter,
+                bodyParams: localVarBodyParameter,
+                timeUnit: _timeUnit,
+            };
+        },
+        /**
          * Query Current UM Open Conditional Order
          *
          * Either `strategyId` or `newClientStrategyId` must be sent.
@@ -2666,12 +3028,13 @@ const TradeApiAxiosParamCreator = function (configuration: ConfigurationRestAPI)
          *
          * Weight: 1
          *
-         * @summary Query Current UM Open Conditional Order(USER_DATA)
+         * @summary Query Current UM Open Conditional Order
          * @param {string} symbol
          * @param {number | bigint} [strategyId]
          * @param {string} [newClientStrategyId]
          * @param {number | bigint} [recvWindow]
          *
+         * @deprecated
          * @throws {RequiredError}
          */
         queryCurrentUmOpenConditionalOrder: async (
@@ -2934,6 +3297,68 @@ const TradeApiAxiosParamCreator = function (configuration: ConfigurationRestAPI)
             };
         },
         /**
+         * Get all algo orders; ACTIVE, CANCELED, TRIGGERED or FINISHED .
+         *
+         * If `algoId` is set, it will get orders >= that `algoId`. Otherwise most recent orders are returned.
+         * The query time period must be less then 7 days( default as the recent 7 days).
+         *
+         * Weight: 5
+         *
+         * @summary Query UM Algo Order History (USER_DATA)
+         * @param {string} symbol
+         * @param {number | bigint} [algoId]
+         * @param {number | bigint} [startTime] Timestamp in ms to get funding from INCLUSIVE.
+         * @param {number | bigint} [endTime] Timestamp in ms to get funding until INCLUSIVE.
+         * @param {number | bigint} [limit] Default 100; max 1000
+         * @param {number | bigint} [recvWindow]
+         *
+         * @throws {RequiredError}
+         */
+        queryUmAlgoOrderHistory: async (
+            symbol: string,
+            algoId?: number | bigint,
+            startTime?: number | bigint,
+            endTime?: number | bigint,
+            limit?: number | bigint,
+            recvWindow?: number | bigint
+        ): Promise<RequestArgs> => {
+            // verify required parameter 'symbol' is not null or undefined
+            assertParamExists('queryUmAlgoOrderHistory', 'symbol', symbol);
+
+            const localVarQueryParameter: Record<string, unknown> = {};
+            const localVarBodyParameter: Record<string, unknown> = {};
+
+            if (symbol !== undefined && symbol !== null) {
+                localVarQueryParameter['symbol'] = symbol;
+            }
+            if (algoId !== undefined && algoId !== null) {
+                localVarQueryParameter['algoId'] = algoId;
+            }
+            if (startTime !== undefined && startTime !== null) {
+                localVarQueryParameter['startTime'] = startTime;
+            }
+            if (endTime !== undefined && endTime !== null) {
+                localVarQueryParameter['endTime'] = endTime;
+            }
+            if (limit !== undefined && limit !== null) {
+                localVarQueryParameter['limit'] = limit;
+            }
+            if (recvWindow !== undefined && recvWindow !== null) {
+                localVarQueryParameter['recvWindow'] = recvWindow;
+            }
+
+            let _timeUnit: TimeUnit | undefined;
+            if ('timeUnit' in configuration) _timeUnit = configuration.timeUnit as TimeUnit;
+
+            return {
+                endpoint: '/papi/v1/um/algo/allAlgoOrders',
+                method: 'GET',
+                queryParams: localVarQueryParameter,
+                bodyParams: localVarBodyParameter,
+                timeUnit: _timeUnit,
+            };
+        },
+        /**
          * Query UM Conditional Order History
          *
          * Either `strategyId` or `newClientStrategyId` must be sent.
@@ -2945,12 +3370,13 @@ const TradeApiAxiosParamCreator = function (configuration: ConfigurationRestAPI)
          *
          * Weight: 1
          *
-         * @summary Query UM Conditional Order History(USER_DATA)
+         * @summary Query UM Conditional Order History
          * @param {string} symbol
          * @param {number | bigint} [strategyId]
          * @param {string} [newClientStrategyId]
          * @param {number | bigint} [recvWindow]
          *
+         * @deprecated
          * @throws {RequiredError}
          */
         queryUmConditionalOrderHistory: async (
@@ -3467,13 +3893,28 @@ export interface TradeApiInterface {
         requestParameters: CancelAllCmOpenOrdersRequest
     ): Promise<RestApiResponse<CancelAllCmOpenOrdersResponse>>;
     /**
+     * Cancel All UM Algo Open Orders
+     *
+     * Weight: 1
+     *
+     * @summary Cancel All UM Algo Open Orders (TRADE)
+     * @param {CancelAllUmAlgoOpenOrdersRequest} requestParameters Request parameters.
+     *
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @memberof TradeApiInterface
+     */
+    cancelAllUmAlgoOpenOrders(
+        requestParameters: CancelAllUmAlgoOpenOrdersRequest
+    ): Promise<RestApiResponse<CancelAllUmAlgoOpenOrdersResponse>>;
+    /**
      * Cancel All UM Open Conditional Orders
      *
      * Weight: 1
      *
-     * @summary Cancel All UM Open Conditional Orders (TRADE)
+     * @summary Cancel All UM Open Conditional Orders
      * @param {CancelAllUmOpenConditionalOrdersRequest} requestParameters Request parameters.
      *
+     * @deprecated
      * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
      * @memberof TradeApiInterface
      */
@@ -3573,15 +4014,32 @@ export interface TradeApiInterface {
         requestParameters: CancelMarginAccountOrderRequest
     ): Promise<RestApiResponse<CancelMarginAccountOrderResponse>>;
     /**
+     * Cancel an active UM algo order.
+     *
+     * Either `algoId` or `clientAlgoId` must be sent.
+     *
+     * Weight: 1
+     *
+     * @summary Cancel UM Algo Order (TRADE)
+     * @param {CancelUmAlgoOrderRequest} requestParameters Request parameters.
+     *
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @memberof TradeApiInterface
+     */
+    cancelUmAlgoOrder(
+        requestParameters?: CancelUmAlgoOrderRequest
+    ): Promise<RestApiResponse<CancelUmAlgoOrderResponse>>;
+    /**
      * Cancel UM Conditional Order
      *
      * Either `strategyId` or `newClientStrategyId` must be sent.
      *
      * Weight: 1
      *
-     * @summary Cancel UM Conditional Order(TRADE)
+     * @summary Cancel UM Conditional Order
      * @param {CancelUmConditionalOrderRequest} requestParameters Request parameters.
      *
+     * @deprecated
      * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
      * @memberof TradeApiInterface
      */
@@ -3873,6 +4331,52 @@ export interface TradeApiInterface {
     /**
      * Place new UM conditional order
      *
+     * Algo order with type `STOP`,  parameter `timeInForce` can be sent ( default `GTC`).
+     * Algo order with type `TAKE_PROFIT`,  parameter `timeInForce` can be sent ( default `GTC`).
+     * Condition orders will be triggered when:
+     *
+     * If parameter`priceProtect`is sent as true:
+     * when price reaches the `triggerPrice` , the difference rate between "MARK_PRICE" and "CONTRACT_PRICE" cannot be larger than the "triggerProtect" of the symbol
+     * "triggerProtect" of a symbol can be got from `GET /fapi/v1/exchangeInfo`
+     *
+     * `STOP`, `STOP_MARKET`:
+     * BUY: latest price ("MARK_PRICE" or "CONTRACT_PRICE") >= `triggerPrice`
+     * SELL: latest price ("MARK_PRICE" or "CONTRACT_PRICE") <= `triggerPrice`
+     * `TAKE_PROFIT`, `TAKE_PROFIT_MARKET`:
+     * BUY: latest price ("MARK_PRICE" or "CONTRACT_PRICE") <= `triggerPrice`
+     * SELL: latest price ("MARK_PRICE" or "CONTRACT_PRICE") >= `triggerPrice`
+     * `TRAILING_STOP_MARKET`:
+     * BUY: the lowest price after order placed <= `activatePrice`, and the latest price >= the lowest price * (1 + `callbackRate`)
+     * SELL: the highest price after order placed >= `activatePrice`, and the latest price <= the highest price * (1 - `callbackRate`)
+     *
+     * For `TRAILING_STOP_MARKET`, if you got such error code.
+     * ``{"code": -2021, "msg": "Order would immediately trigger."}``
+     * means that the parameters you send do not meet the following requirements:
+     * BUY: `activatePrice` should be smaller than latest price.
+     * SELL: `activatePrice` should be larger than latest price.
+     *
+     * `STOP_MARKET`, `TAKE_PROFIT_MARKET` with `closePosition`=`true`:
+     * Follow the same rules for condition orders.
+     * If triggered, **close all** current long position( if `SELL`) or current short position( if `BUY`).
+     * Cannot be used with `quantity` paremeter
+     * Cannot be used with `reduceOnly` parameter
+     * In Hedge Mode,cannot be used with `BUY` orders in `LONG` position side. and cannot be used with `SELL` orders in `SHORT` position side
+     * `selfTradePreventionMode` is only effective when `timeInForce` set to `IOC` or `GTC` or `GTD`.
+     *
+     * Weight: 1
+     *
+     * @summary New UM Algo Order (TRADE)
+     * @param {NewUmAlgoOrderRequest} requestParameters Request parameters.
+     *
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @memberof TradeApiInterface
+     */
+    newUmAlgoOrder(
+        requestParameters: NewUmAlgoOrderRequest
+    ): Promise<RestApiResponse<NewUmAlgoOrderResponse>>;
+    /**
+     * Place new UM conditional order
+     *
      * Order with type `STOP/TAKE_PROFIT`, parameter `timeInForce` can be sent ( default `GTC`).
      * Condition orders will be triggered when:
      * `STOP`, `STOP_MARKET`:
@@ -3902,9 +4406,10 @@ export interface TradeApiInterface {
      *
      * Weight: 1
      *
-     * @summary New UM Conditional Order (TRADE)
+     * @summary New UM Conditional Order
      * @param {NewUmConditionalOrderRequest} requestParameters Request parameters.
      *
+     * @deprecated
      * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
      * @memberof TradeApiInterface
      */
@@ -4004,6 +4509,23 @@ export interface TradeApiInterface {
         requestParameters?: QueryAllCurrentCmOpenOrdersRequest
     ): Promise<RestApiResponse<QueryAllCurrentCmOpenOrdersResponse>>;
     /**
+     * Get all UM open algo orders on a symbol.
+     *
+     * If the symbol is not sent, orders for all symbols will be returned in an array.
+     *
+     * Weight: 1 for a single symbol; 40 when the symbol parameter is omitted
+     * Careful when accessing this with no symbol.
+     *
+     * @summary Query All Current UM Open Algo Orders (USER_DATA)
+     * @param {QueryAllCurrentUmOpenAlgoOrdersRequest} requestParameters Request parameters.
+     *
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @memberof TradeApiInterface
+     */
+    queryAllCurrentUmOpenAlgoOrders(
+        requestParameters?: QueryAllCurrentUmOpenAlgoOrdersRequest
+    ): Promise<RestApiResponse<QueryAllCurrentUmOpenAlgoOrdersResponse>>;
+    /**
      * Get all open conditional orders on a symbol.
      *
      * If the symbol is not sent, orders for all symbols will be returned in an array.
@@ -4011,9 +4533,10 @@ export interface TradeApiInterface {
      * Weight: 1 for a single symbol; 40 when the symbol parameter is omitted
      * Careful when accessing this with no symbol.
      *
-     * @summary Query All Current UM Open Conditional Orders(USER_DATA)
+     * @summary Query All Current UM Open Conditional Orders
      * @param {QueryAllCurrentUmOpenConditionalOrdersRequest} requestParameters Request parameters.
      *
+     * @deprecated
      * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
      * @memberof TradeApiInterface
      */
@@ -4062,9 +4585,10 @@ export interface TradeApiInterface {
      *
      * Weight: 1 for a single symbol; 40 when the symbol parameter is omitted
      *
-     * @summary Query All UM Conditional Orders(USER_DATA)
+     * @summary Query All UM Conditional Orders
      * @param {QueryAllUmConditionalOrdersRequest} requestParameters Request parameters.
      *
+     * @deprecated
      * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
      * @memberof TradeApiInterface
      */
@@ -4199,6 +4723,27 @@ export interface TradeApiInterface {
         requestParameters: QueryCurrentMarginOpenOrderRequest
     ): Promise<RestApiResponse<QueryCurrentMarginOpenOrderResponse>>;
     /**
+     * Check an UM algo order's status.
+     *
+     * These orders will not be found:
+     * order status is `CANCELED` or `EXPIRED` **AND** order has NO filled trade **AND** created time + 3 days < current time
+     * order create time + 90 days < current time
+     *
+     * Either `algoId` or `clientAlgoId` must be sent.
+     * `algoId` is self-increment for each specific `symbol`
+     *
+     * Weight: 1
+     *
+     * @summary Query Current UM Open Algo Order (USER_DATA)
+     * @param {QueryCurrentUmOpenAlgoOrderRequest} requestParameters Request parameters.
+     *
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @memberof TradeApiInterface
+     */
+    queryCurrentUmOpenAlgoOrder(
+        requestParameters?: QueryCurrentUmOpenAlgoOrderRequest
+    ): Promise<RestApiResponse<QueryCurrentUmOpenAlgoOrderResponse>>;
+    /**
      * Query Current UM Open Conditional Order
      *
      * Either `strategyId` or `newClientStrategyId` must be sent.
@@ -4206,9 +4751,10 @@ export interface TradeApiInterface {
      *
      * Weight: 1
      *
-     * @summary Query Current UM Open Conditional Order(USER_DATA)
+     * @summary Query Current UM Open Conditional Order
      * @param {QueryCurrentUmOpenConditionalOrderRequest} requestParameters Request parameters.
      *
+     * @deprecated
      * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
      * @memberof TradeApiInterface
      */
@@ -4290,6 +4836,23 @@ export interface TradeApiInterface {
         requestParameters?: QueryMarginAccountsOpenOcoRequest
     ): Promise<RestApiResponse<QueryMarginAccountsOpenOcoResponse>>;
     /**
+     * Get all algo orders; ACTIVE, CANCELED, TRIGGERED or FINISHED .
+     *
+     * If `algoId` is set, it will get orders >= that `algoId`. Otherwise most recent orders are returned.
+     * The query time period must be less then 7 days( default as the recent 7 days).
+     *
+     * Weight: 5
+     *
+     * @summary Query UM Algo Order History (USER_DATA)
+     * @param {QueryUmAlgoOrderHistoryRequest} requestParameters Request parameters.
+     *
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @memberof TradeApiInterface
+     */
+    queryUmAlgoOrderHistory(
+        requestParameters: QueryUmAlgoOrderHistoryRequest
+    ): Promise<RestApiResponse<QueryUmAlgoOrderHistoryResponse>>;
+    /**
      * Query UM Conditional Order History
      *
      * Either `strategyId` or `newClientStrategyId` must be sent.
@@ -4301,9 +4864,10 @@ export interface TradeApiInterface {
      *
      * Weight: 1
      *
-     * @summary Query UM Conditional Order History(USER_DATA)
+     * @summary Query UM Conditional Order History
      * @param {QueryUmConditionalOrderHistoryRequest} requestParameters Request parameters.
      *
+     * @deprecated
      * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
      * @memberof TradeApiInterface
      */
@@ -4491,6 +5055,26 @@ export interface CancelAllCmOpenOrdersRequest {
      *
      * @type {number | bigint}
      * @memberof TradeApiCancelAllCmOpenOrders
+     */
+    readonly recvWindow?: number | bigint;
+}
+
+/**
+ * Request parameters for cancelAllUmAlgoOpenOrders operation in TradeApi.
+ * @interface CancelAllUmAlgoOpenOrdersRequest
+ */
+export interface CancelAllUmAlgoOpenOrdersRequest {
+    /**
+     *
+     * @type {string}
+     * @memberof TradeApiCancelAllUmAlgoOpenOrders
+     */
+    readonly symbol: string;
+
+    /**
+     *
+     * @type {number | bigint}
+     * @memberof TradeApiCancelAllUmAlgoOpenOrders
      */
     readonly recvWindow?: number | bigint;
 }
@@ -4701,6 +5285,33 @@ export interface CancelMarginAccountOrderRequest {
      *
      * @type {number | bigint}
      * @memberof TradeApiCancelMarginAccountOrder
+     */
+    readonly recvWindow?: number | bigint;
+}
+
+/**
+ * Request parameters for cancelUmAlgoOrder operation in TradeApi.
+ * @interface CancelUmAlgoOrderRequest
+ */
+export interface CancelUmAlgoOrderRequest {
+    /**
+     *
+     * @type {number | bigint}
+     * @memberof TradeApiCancelUmAlgoOrder
+     */
+    readonly algoId?: number | bigint;
+
+    /**
+     *
+     * @type {string}
+     * @memberof TradeApiCancelUmAlgoOrder
+     */
+    readonly clientAlgoId?: string;
+
+    /**
+     *
+     * @type {number | bigint}
+     * @memberof TradeApiCancelUmAlgoOrder
      */
     readonly recvWindow?: number | bigint;
 }
@@ -5565,6 +6176,159 @@ export interface NewMarginOrderRequest {
 }
 
 /**
+ * Request parameters for newUmAlgoOrder operation in TradeApi.
+ * @interface NewUmAlgoOrderRequest
+ */
+export interface NewUmAlgoOrderRequest {
+    /**
+     * Only support `CONDITIONAL`
+     * @type {string}
+     * @memberof TradeApiNewUmAlgoOrder
+     */
+    readonly algoType: string;
+
+    /**
+     *
+     * @type {string}
+     * @memberof TradeApiNewUmAlgoOrder
+     */
+    readonly symbol: string;
+
+    /**
+     *
+     * @type {'BUY' | 'SELL'}
+     * @memberof TradeApiNewUmAlgoOrder
+     */
+    readonly side: NewUmAlgoOrderSideEnum;
+
+    /**
+     * `LIMIT`, `MARKET`
+     * @type {'LIMIT' | 'MARKET'}
+     * @memberof TradeApiNewUmAlgoOrder
+     */
+    readonly type: NewUmAlgoOrderTypeEnum;
+
+    /**
+     * Default `BOTH` for One-way Mode ; `LONG` or `SHORT` for Hedge Mode. It must be sent in Hedge Mode.
+     * @type {'BOTH' | 'LONG' | 'SHORT'}
+     * @memberof TradeApiNewUmAlgoOrder
+     */
+    readonly positionSide?: NewUmAlgoOrderPositionSideEnum;
+
+    /**
+     *
+     * @type {'GTC' | 'IOC' | 'FOK' | 'GTX'}
+     * @memberof TradeApiNewUmAlgoOrder
+     */
+    readonly timeInForce?: NewUmAlgoOrderTimeInForceEnum;
+
+    /**
+     *
+     * @type {number}
+     * @memberof TradeApiNewUmAlgoOrder
+     */
+    readonly quantity?: number;
+
+    /**
+     *
+     * @type {number}
+     * @memberof TradeApiNewUmAlgoOrder
+     */
+    readonly price?: number;
+
+    /**
+     *
+     * @type {number}
+     * @memberof TradeApiNewUmAlgoOrder
+     */
+    readonly triggerPrice?: number;
+
+    /**
+     * stopPrice triggered by: "MARK_PRICE", "CONTRACT_PRICE". Default "CONTRACT_PRICE"
+     * @type {'MARK_PRICE'}
+     * @memberof TradeApiNewUmAlgoOrder
+     */
+    readonly workingType?: NewUmAlgoOrderWorkingTypeEnum;
+
+    /**
+     * only avaliable for `LIMIT`/`STOP`/`TAKE_PROFIT` order; can be set to `OPPONENT`/ `OPPONENT_5`/ `OPPONENT_10`/ `OPPONENT_20`: /`QUEUE`/ `QUEUE_5`/ `QUEUE_10`/ `QUEUE_20`; Can't be passed together with `price`
+     * @type {'NONE' | 'OPPONENT' | 'OPPONENT_5' | 'OPPONENT_10' | 'OPPONENT_20' | 'QUEUE' | 'QUEUE_5' | 'QUEUE_10' | 'QUEUE_20'}
+     * @memberof TradeApiNewUmAlgoOrder
+     */
+    readonly priceMatch?: NewUmAlgoOrderPriceMatchEnum;
+
+    /**
+     * true, false; Close-All, used with `STOP_MARKET` or `TAKE_PROFIT_MARKET`.
+     * @type {string}
+     * @memberof TradeApiNewUmAlgoOrder
+     */
+    readonly closePosition?: string;
+
+    /**
+     * "TRUE" or "FALSE", default "FALSE". Used with `STOP/STOP_MARKET` or `TAKE_PROFIT/TAKE_PROFIT_MARKET` orders
+     * @type {string}
+     * @memberof TradeApiNewUmAlgoOrder
+     */
+    readonly priceProtect?: string;
+
+    /**
+     * "true" or "false". default "false". Cannot be sent in Hedge Mode .
+     * @type {string}
+     * @memberof TradeApiNewUmAlgoOrder
+     */
+    readonly reduceOnly?: string;
+
+    /**
+     * Used with `TRAILING_STOP_MARKET` orders, default as the latest price(supporting different `workingType`)
+     * @type {number}
+     * @memberof TradeApiNewUmAlgoOrder
+     */
+    readonly activatePrice?: number;
+
+    /**
+     * Used with `TRAILING_STOP_MARKET` orders, min 0.1, max 5 where 1 for 1%
+     * @type {number}
+     * @memberof TradeApiNewUmAlgoOrder
+     */
+    readonly callbackRate?: number;
+
+    /**
+     *
+     * @type {string}
+     * @memberof TradeApiNewUmAlgoOrder
+     */
+    readonly clientAlgoId?: string;
+
+    /**
+     * "ACK", "RESULT", default "ACK"
+     * @type {'ACK' | 'RESULT'}
+     * @memberof TradeApiNewUmAlgoOrder
+     */
+    readonly newOrderRespType?: NewUmAlgoOrderNewOrderRespTypeEnum;
+
+    /**
+     * `NONE`:No STP / `EXPIRE_TAKER`:expire taker order when STP triggers/ `EXPIRE_MAKER`:expire taker order when STP triggers/ `EXPIRE_BOTH`:expire both orders when STP triggers
+     * @type {'NONE' | 'EXPIRE_TAKER' | 'EXPIRE_BOTH' | 'EXPIRE_MAKER'}
+     * @memberof TradeApiNewUmAlgoOrder
+     */
+    readonly selfTradePreventionMode?: NewUmAlgoOrderSelfTradePreventionModeEnum;
+
+    /**
+     * order cancel time for timeInForce `GTD`, mandatory when `timeInforce` set to `GTD`; order the timestamp only retains second-level precision, ms part will be ignored; The goodTillDate timestamp must be greater than the current time plus 600 seconds and smaller than 253402300799000Mode. It must be sent in Hedge Mode.
+     * @type {number | bigint}
+     * @memberof TradeApiNewUmAlgoOrder
+     */
+    readonly goodTillDate?: number | bigint;
+
+    /**
+     *
+     * @type {number | bigint}
+     * @memberof TradeApiNewUmAlgoOrder
+     */
+    readonly recvWindow?: number | bigint;
+}
+
+/**
  * Request parameters for newUmConditionalOrder operation in TradeApi.
  * @interface NewUmConditionalOrderRequest
  */
@@ -5946,6 +6710,40 @@ export interface QueryAllCurrentCmOpenOrdersRequest {
      *
      * @type {number | bigint}
      * @memberof TradeApiQueryAllCurrentCmOpenOrders
+     */
+    readonly recvWindow?: number | bigint;
+}
+
+/**
+ * Request parameters for queryAllCurrentUmOpenAlgoOrders operation in TradeApi.
+ * @interface QueryAllCurrentUmOpenAlgoOrdersRequest
+ */
+export interface QueryAllCurrentUmOpenAlgoOrdersRequest {
+    /**
+     *
+     * @type {string}
+     * @memberof TradeApiQueryAllCurrentUmOpenAlgoOrders
+     */
+    readonly algoType?: string;
+
+    /**
+     *
+     * @type {string}
+     * @memberof TradeApiQueryAllCurrentUmOpenAlgoOrders
+     */
+    readonly symbol?: string;
+
+    /**
+     *
+     * @type {number | bigint}
+     * @memberof TradeApiQueryAllCurrentUmOpenAlgoOrders
+     */
+    readonly algoId?: number | bigint;
+
+    /**
+     *
+     * @type {number | bigint}
+     * @memberof TradeApiQueryAllCurrentUmOpenAlgoOrders
      */
     readonly recvWindow?: number | bigint;
 }
@@ -6346,6 +7144,33 @@ export interface QueryCurrentMarginOpenOrderRequest {
 }
 
 /**
+ * Request parameters for queryCurrentUmOpenAlgoOrder operation in TradeApi.
+ * @interface QueryCurrentUmOpenAlgoOrderRequest
+ */
+export interface QueryCurrentUmOpenAlgoOrderRequest {
+    /**
+     *
+     * @type {number | bigint}
+     * @memberof TradeApiQueryCurrentUmOpenAlgoOrder
+     */
+    readonly algoId?: number | bigint;
+
+    /**
+     *
+     * @type {string}
+     * @memberof TradeApiQueryCurrentUmOpenAlgoOrder
+     */
+    readonly clientAlgoId?: string;
+
+    /**
+     *
+     * @type {number | bigint}
+     * @memberof TradeApiQueryCurrentUmOpenAlgoOrder
+     */
+    readonly recvWindow?: number | bigint;
+}
+
+/**
  * Request parameters for queryCurrentUmOpenConditionalOrder operation in TradeApi.
  * @interface QueryCurrentUmOpenConditionalOrderRequest
  */
@@ -6524,6 +7349,54 @@ export interface QueryMarginAccountsOpenOcoRequest {
      *
      * @type {number | bigint}
      * @memberof TradeApiQueryMarginAccountsOpenOco
+     */
+    readonly recvWindow?: number | bigint;
+}
+
+/**
+ * Request parameters for queryUmAlgoOrderHistory operation in TradeApi.
+ * @interface QueryUmAlgoOrderHistoryRequest
+ */
+export interface QueryUmAlgoOrderHistoryRequest {
+    /**
+     *
+     * @type {string}
+     * @memberof TradeApiQueryUmAlgoOrderHistory
+     */
+    readonly symbol: string;
+
+    /**
+     *
+     * @type {number | bigint}
+     * @memberof TradeApiQueryUmAlgoOrderHistory
+     */
+    readonly algoId?: number | bigint;
+
+    /**
+     * Timestamp in ms to get funding from INCLUSIVE.
+     * @type {number | bigint}
+     * @memberof TradeApiQueryUmAlgoOrderHistory
+     */
+    readonly startTime?: number | bigint;
+
+    /**
+     * Timestamp in ms to get funding until INCLUSIVE.
+     * @type {number | bigint}
+     * @memberof TradeApiQueryUmAlgoOrderHistory
+     */
+    readonly endTime?: number | bigint;
+
+    /**
+     * Default 100; max 1000
+     * @type {number | bigint}
+     * @memberof TradeApiQueryUmAlgoOrderHistory
+     */
+    readonly limit?: number | bigint;
+
+    /**
+     *
+     * @type {number | bigint}
+     * @memberof TradeApiQueryUmAlgoOrderHistory
      */
     readonly recvWindow?: number | bigint;
 }
@@ -6951,11 +7824,41 @@ export class TradeApi implements TradeApiInterface {
     }
 
     /**
+     * Cancel All UM Algo Open Orders
+     *
+     * Weight: 1
+     *
+     * @summary Cancel All UM Algo Open Orders (TRADE)
+     * @param {CancelAllUmAlgoOpenOrdersRequest} requestParameters Request parameters.
+     * @returns {Promise<RestApiResponse<CancelAllUmAlgoOpenOrdersResponse>>}
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @memberof TradeApi
+     * @see {@link https://developers.binance.com/docs/derivatives/portfolio-margin/trade/Cancel-All-UM-Algo-Open-Orders Binance API Documentation}
+     */
+    public async cancelAllUmAlgoOpenOrders(
+        requestParameters: CancelAllUmAlgoOpenOrdersRequest
+    ): Promise<RestApiResponse<CancelAllUmAlgoOpenOrdersResponse>> {
+        const localVarAxiosArgs = await this.localVarAxiosParamCreator.cancelAllUmAlgoOpenOrders(
+            requestParameters?.symbol,
+            requestParameters?.recvWindow
+        );
+        return sendRequest<CancelAllUmAlgoOpenOrdersResponse>(
+            this.configuration,
+            localVarAxiosArgs.endpoint,
+            localVarAxiosArgs.method,
+            localVarAxiosArgs.queryParams,
+            localVarAxiosArgs.bodyParams,
+            localVarAxiosArgs?.timeUnit,
+            { isSigned: true }
+        );
+    }
+
+    /**
      * Cancel All UM Open Conditional Orders
      *
      * Weight: 1
      *
-     * @summary Cancel All UM Open Conditional Orders (TRADE)
+     * @summary Cancel All UM Open Conditional Orders
      * @param {CancelAllUmOpenConditionalOrdersRequest} requestParameters Request parameters.
      * @returns {Promise<RestApiResponse<CancelAllUmOpenConditionalOrdersResponse>>}
      * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
@@ -7181,13 +8084,46 @@ export class TradeApi implements TradeApiInterface {
     }
 
     /**
+     * Cancel an active UM algo order.
+     *
+     * Either `algoId` or `clientAlgoId` must be sent.
+     *
+     * Weight: 1
+     *
+     * @summary Cancel UM Algo Order (TRADE)
+     * @param {CancelUmAlgoOrderRequest} requestParameters Request parameters.
+     * @returns {Promise<RestApiResponse<CancelUmAlgoOrderResponse>>}
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @memberof TradeApi
+     * @see {@link https://developers.binance.com/docs/derivatives/portfolio-margin/trade/Cancel-UM-Algo-Order Binance API Documentation}
+     */
+    public async cancelUmAlgoOrder(
+        requestParameters: CancelUmAlgoOrderRequest = {}
+    ): Promise<RestApiResponse<CancelUmAlgoOrderResponse>> {
+        const localVarAxiosArgs = await this.localVarAxiosParamCreator.cancelUmAlgoOrder(
+            requestParameters?.algoId,
+            requestParameters?.clientAlgoId,
+            requestParameters?.recvWindow
+        );
+        return sendRequest<CancelUmAlgoOrderResponse>(
+            this.configuration,
+            localVarAxiosArgs.endpoint,
+            localVarAxiosArgs.method,
+            localVarAxiosArgs.queryParams,
+            localVarAxiosArgs.bodyParams,
+            localVarAxiosArgs?.timeUnit,
+            { isSigned: true }
+        );
+    }
+
+    /**
      * Cancel UM Conditional Order
      *
      * Either `strategyId` or `newClientStrategyId` must be sent.
      *
      * Weight: 1
      *
-     * @summary Cancel UM Conditional Order(TRADE)
+     * @summary Cancel UM Conditional Order
      * @param {CancelUmConditionalOrderRequest} requestParameters Request parameters.
      * @returns {Promise<RestApiResponse<CancelUmConditionalOrderResponse>>}
      * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
@@ -7817,6 +8753,87 @@ export class TradeApi implements TradeApiInterface {
     /**
      * Place new UM conditional order
      *
+     * Algo order with type `STOP`,  parameter `timeInForce` can be sent ( default `GTC`).
+     * Algo order with type `TAKE_PROFIT`,  parameter `timeInForce` can be sent ( default `GTC`).
+     * Condition orders will be triggered when:
+     *
+     * If parameter`priceProtect`is sent as true:
+     * when price reaches the `triggerPrice` , the difference rate between "MARK_PRICE" and "CONTRACT_PRICE" cannot be larger than the "triggerProtect" of the symbol
+     * "triggerProtect" of a symbol can be got from `GET /fapi/v1/exchangeInfo`
+     *
+     * `STOP`, `STOP_MARKET`:
+     * BUY: latest price ("MARK_PRICE" or "CONTRACT_PRICE") >= `triggerPrice`
+     * SELL: latest price ("MARK_PRICE" or "CONTRACT_PRICE") <= `triggerPrice`
+     * `TAKE_PROFIT`, `TAKE_PROFIT_MARKET`:
+     * BUY: latest price ("MARK_PRICE" or "CONTRACT_PRICE") <= `triggerPrice`
+     * SELL: latest price ("MARK_PRICE" or "CONTRACT_PRICE") >= `triggerPrice`
+     * `TRAILING_STOP_MARKET`:
+     * BUY: the lowest price after order placed <= `activatePrice`, and the latest price >= the lowest price * (1 + `callbackRate`)
+     * SELL: the highest price after order placed >= `activatePrice`, and the latest price <= the highest price * (1 - `callbackRate`)
+     *
+     * For `TRAILING_STOP_MARKET`, if you got such error code.
+     * ``{"code": -2021, "msg": "Order would immediately trigger."}``
+     * means that the parameters you send do not meet the following requirements:
+     * BUY: `activatePrice` should be smaller than latest price.
+     * SELL: `activatePrice` should be larger than latest price.
+     *
+     * `STOP_MARKET`, `TAKE_PROFIT_MARKET` with `closePosition`=`true`:
+     * Follow the same rules for condition orders.
+     * If triggered, **close all** current long position( if `SELL`) or current short position( if `BUY`).
+     * Cannot be used with `quantity` paremeter
+     * Cannot be used with `reduceOnly` parameter
+     * In Hedge Mode,cannot be used with `BUY` orders in `LONG` position side. and cannot be used with `SELL` orders in `SHORT` position side
+     * `selfTradePreventionMode` is only effective when `timeInForce` set to `IOC` or `GTC` or `GTD`.
+     *
+     * Weight: 1
+     *
+     * @summary New UM Algo Order (TRADE)
+     * @param {NewUmAlgoOrderRequest} requestParameters Request parameters.
+     * @returns {Promise<RestApiResponse<NewUmAlgoOrderResponse>>}
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @memberof TradeApi
+     * @see {@link https://developers.binance.com/docs/derivatives/portfolio-margin/trade/New-UM-Algo-Order Binance API Documentation}
+     */
+    public async newUmAlgoOrder(
+        requestParameters: NewUmAlgoOrderRequest
+    ): Promise<RestApiResponse<NewUmAlgoOrderResponse>> {
+        const localVarAxiosArgs = await this.localVarAxiosParamCreator.newUmAlgoOrder(
+            requestParameters?.algoType,
+            requestParameters?.symbol,
+            requestParameters?.side,
+            requestParameters?.type,
+            requestParameters?.positionSide,
+            requestParameters?.timeInForce,
+            requestParameters?.quantity,
+            requestParameters?.price,
+            requestParameters?.triggerPrice,
+            requestParameters?.workingType,
+            requestParameters?.priceMatch,
+            requestParameters?.closePosition,
+            requestParameters?.priceProtect,
+            requestParameters?.reduceOnly,
+            requestParameters?.activatePrice,
+            requestParameters?.callbackRate,
+            requestParameters?.clientAlgoId,
+            requestParameters?.newOrderRespType,
+            requestParameters?.selfTradePreventionMode,
+            requestParameters?.goodTillDate,
+            requestParameters?.recvWindow
+        );
+        return sendRequest<NewUmAlgoOrderResponse>(
+            this.configuration,
+            localVarAxiosArgs.endpoint,
+            localVarAxiosArgs.method,
+            localVarAxiosArgs.queryParams,
+            localVarAxiosArgs.bodyParams,
+            localVarAxiosArgs?.timeUnit,
+            { isSigned: true }
+        );
+    }
+
+    /**
+     * Place new UM conditional order
+     *
      * Order with type `STOP/TAKE_PROFIT`, parameter `timeInForce` can be sent ( default `GTC`).
      * Condition orders will be triggered when:
      * `STOP`, `STOP_MARKET`:
@@ -7846,7 +8863,7 @@ export class TradeApi implements TradeApiInterface {
      *
      * Weight: 1
      *
-     * @summary New UM Conditional Order (TRADE)
+     * @summary New UM Conditional Order
      * @param {NewUmConditionalOrderRequest} requestParameters Request parameters.
      * @returns {Promise<RestApiResponse<NewUmConditionalOrderResponse>>}
      * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
@@ -8085,6 +9102,42 @@ export class TradeApi implements TradeApiInterface {
     }
 
     /**
+     * Get all UM open algo orders on a symbol.
+     *
+     * If the symbol is not sent, orders for all symbols will be returned in an array.
+     *
+     * Weight: 1 for a single symbol; 40 when the symbol parameter is omitted
+     * Careful when accessing this with no symbol.
+     *
+     * @summary Query All Current UM Open Algo Orders (USER_DATA)
+     * @param {QueryAllCurrentUmOpenAlgoOrdersRequest} requestParameters Request parameters.
+     * @returns {Promise<RestApiResponse<QueryAllCurrentUmOpenAlgoOrdersResponse>>}
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @memberof TradeApi
+     * @see {@link https://developers.binance.com/docs/derivatives/portfolio-margin/trade/Query-All-Current-UM-Open-Algo-Orders Binance API Documentation}
+     */
+    public async queryAllCurrentUmOpenAlgoOrders(
+        requestParameters: QueryAllCurrentUmOpenAlgoOrdersRequest = {}
+    ): Promise<RestApiResponse<QueryAllCurrentUmOpenAlgoOrdersResponse>> {
+        const localVarAxiosArgs =
+            await this.localVarAxiosParamCreator.queryAllCurrentUmOpenAlgoOrders(
+                requestParameters?.algoType,
+                requestParameters?.symbol,
+                requestParameters?.algoId,
+                requestParameters?.recvWindow
+            );
+        return sendRequest<QueryAllCurrentUmOpenAlgoOrdersResponse>(
+            this.configuration,
+            localVarAxiosArgs.endpoint,
+            localVarAxiosArgs.method,
+            localVarAxiosArgs.queryParams,
+            localVarAxiosArgs.bodyParams,
+            localVarAxiosArgs?.timeUnit,
+            { isSigned: true }
+        );
+    }
+
+    /**
      * Get all open conditional orders on a symbol.
      *
      * If the symbol is not sent, orders for all symbols will be returned in an array.
@@ -8092,7 +9145,7 @@ export class TradeApi implements TradeApiInterface {
      * Weight: 1 for a single symbol; 40 when the symbol parameter is omitted
      * Careful when accessing this with no symbol.
      *
-     * @summary Query All Current UM Open Conditional Orders(USER_DATA)
+     * @summary Query All Current UM Open Conditional Orders
      * @param {QueryAllCurrentUmOpenConditionalOrdersRequest} requestParameters Request parameters.
      * @returns {Promise<RestApiResponse<QueryAllCurrentUmOpenConditionalOrdersResponse>>}
      * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
@@ -8196,7 +9249,7 @@ export class TradeApi implements TradeApiInterface {
      *
      * Weight: 1 for a single symbol; 40 when the symbol parameter is omitted
      *
-     * @summary Query All UM Conditional Orders(USER_DATA)
+     * @summary Query All UM Conditional Orders
      * @param {QueryAllUmConditionalOrdersRequest} requestParameters Request parameters.
      * @returns {Promise<RestApiResponse<QueryAllUmConditionalOrdersResponse>>}
      * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
@@ -8484,6 +9537,44 @@ export class TradeApi implements TradeApiInterface {
     }
 
     /**
+     * Check an UM algo order's status.
+     *
+     * These orders will not be found:
+     * order status is `CANCELED` or `EXPIRED` **AND** order has NO filled trade **AND** created time + 3 days < current time
+     * order create time + 90 days < current time
+     *
+     * Either `algoId` or `clientAlgoId` must be sent.
+     * `algoId` is self-increment for each specific `symbol`
+     *
+     * Weight: 1
+     *
+     * @summary Query Current UM Open Algo Order (USER_DATA)
+     * @param {QueryCurrentUmOpenAlgoOrderRequest} requestParameters Request parameters.
+     * @returns {Promise<RestApiResponse<QueryCurrentUmOpenAlgoOrderResponse>>}
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @memberof TradeApi
+     * @see {@link https://developers.binance.com/docs/derivatives/portfolio-margin/trade/Query-Current-UM-Open-Algo-Order Binance API Documentation}
+     */
+    public async queryCurrentUmOpenAlgoOrder(
+        requestParameters: QueryCurrentUmOpenAlgoOrderRequest = {}
+    ): Promise<RestApiResponse<QueryCurrentUmOpenAlgoOrderResponse>> {
+        const localVarAxiosArgs = await this.localVarAxiosParamCreator.queryCurrentUmOpenAlgoOrder(
+            requestParameters?.algoId,
+            requestParameters?.clientAlgoId,
+            requestParameters?.recvWindow
+        );
+        return sendRequest<QueryCurrentUmOpenAlgoOrderResponse>(
+            this.configuration,
+            localVarAxiosArgs.endpoint,
+            localVarAxiosArgs.method,
+            localVarAxiosArgs.queryParams,
+            localVarAxiosArgs.bodyParams,
+            localVarAxiosArgs?.timeUnit,
+            { isSigned: true }
+        );
+    }
+
+    /**
      * Query Current UM Open Conditional Order
      *
      * Either `strategyId` or `newClientStrategyId` must be sent.
@@ -8491,7 +9582,7 @@ export class TradeApi implements TradeApiInterface {
      *
      * Weight: 1
      *
-     * @summary Query Current UM Open Conditional Order(USER_DATA)
+     * @summary Query Current UM Open Conditional Order
      * @param {QueryCurrentUmOpenConditionalOrderRequest} requestParameters Request parameters.
      * @returns {Promise<RestApiResponse<QueryCurrentUmOpenConditionalOrderResponse>>}
      * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
@@ -8681,6 +9772,43 @@ export class TradeApi implements TradeApiInterface {
     }
 
     /**
+     * Get all algo orders; ACTIVE, CANCELED, TRIGGERED or FINISHED .
+     *
+     * If `algoId` is set, it will get orders >= that `algoId`. Otherwise most recent orders are returned.
+     * The query time period must be less then 7 days( default as the recent 7 days).
+     *
+     * Weight: 5
+     *
+     * @summary Query UM Algo Order History (USER_DATA)
+     * @param {QueryUmAlgoOrderHistoryRequest} requestParameters Request parameters.
+     * @returns {Promise<RestApiResponse<QueryUmAlgoOrderHistoryResponse>>}
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @memberof TradeApi
+     * @see {@link https://developers.binance.com/docs/derivatives/portfolio-margin/trade/Query-UM-Algo-Order-History Binance API Documentation}
+     */
+    public async queryUmAlgoOrderHistory(
+        requestParameters: QueryUmAlgoOrderHistoryRequest
+    ): Promise<RestApiResponse<QueryUmAlgoOrderHistoryResponse>> {
+        const localVarAxiosArgs = await this.localVarAxiosParamCreator.queryUmAlgoOrderHistory(
+            requestParameters?.symbol,
+            requestParameters?.algoId,
+            requestParameters?.startTime,
+            requestParameters?.endTime,
+            requestParameters?.limit,
+            requestParameters?.recvWindow
+        );
+        return sendRequest<QueryUmAlgoOrderHistoryResponse>(
+            this.configuration,
+            localVarAxiosArgs.endpoint,
+            localVarAxiosArgs.method,
+            localVarAxiosArgs.queryParams,
+            localVarAxiosArgs.bodyParams,
+            localVarAxiosArgs?.timeUnit,
+            { isSigned: true }
+        );
+    }
+
+    /**
      * Query UM Conditional Order History
      *
      * Either `strategyId` or `newClientStrategyId` must be sent.
@@ -8692,7 +9820,7 @@ export class TradeApi implements TradeApiInterface {
      *
      * Weight: 1
      *
-     * @summary Query UM Conditional Order History(USER_DATA)
+     * @summary Query UM Conditional Order History
      * @param {QueryUmConditionalOrderHistoryRequest} requestParameters Request parameters.
      * @returns {Promise<RestApiResponse<QueryUmConditionalOrderHistoryResponse>>}
      * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
@@ -9172,6 +10300,57 @@ export enum NewMarginOrderTimeInForceEnum {
 }
 
 export enum NewMarginOrderSelfTradePreventionModeEnum {
+    NONE = 'NONE',
+    EXPIRE_TAKER = 'EXPIRE_TAKER',
+    EXPIRE_BOTH = 'EXPIRE_BOTH',
+    EXPIRE_MAKER = 'EXPIRE_MAKER',
+}
+
+export enum NewUmAlgoOrderSideEnum {
+    BUY = 'BUY',
+    SELL = 'SELL',
+}
+
+export enum NewUmAlgoOrderTypeEnum {
+    LIMIT = 'LIMIT',
+    MARKET = 'MARKET',
+}
+
+export enum NewUmAlgoOrderPositionSideEnum {
+    BOTH = 'BOTH',
+    LONG = 'LONG',
+    SHORT = 'SHORT',
+}
+
+export enum NewUmAlgoOrderTimeInForceEnum {
+    GTC = 'GTC',
+    IOC = 'IOC',
+    FOK = 'FOK',
+    GTX = 'GTX',
+}
+
+export enum NewUmAlgoOrderWorkingTypeEnum {
+    MARK_PRICE = 'MARK_PRICE',
+}
+
+export enum NewUmAlgoOrderPriceMatchEnum {
+    NONE = 'NONE',
+    OPPONENT = 'OPPONENT',
+    OPPONENT_5 = 'OPPONENT_5',
+    OPPONENT_10 = 'OPPONENT_10',
+    OPPONENT_20 = 'OPPONENT_20',
+    QUEUE = 'QUEUE',
+    QUEUE_5 = 'QUEUE_5',
+    QUEUE_10 = 'QUEUE_10',
+    QUEUE_20 = 'QUEUE_20',
+}
+
+export enum NewUmAlgoOrderNewOrderRespTypeEnum {
+    ACK = 'ACK',
+    RESULT = 'RESULT',
+}
+
+export enum NewUmAlgoOrderSelfTradePreventionModeEnum {
     NONE = 'NONE',
     EXPIRE_TAKER = 'EXPIRE_TAKER',
     EXPIRE_BOTH = 'EXPIRE_BOTH',

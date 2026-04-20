@@ -65,6 +65,7 @@ import type {} from './modules/market-data-api';
 import type {
     CancelAllCmOpenConditionalOrdersRequest,
     CancelAllCmOpenOrdersRequest,
+    CancelAllUmAlgoOpenOrdersRequest,
     CancelAllUmOpenConditionalOrdersRequest,
     CancelAllUmOpenOrdersRequest,
     CancelCmConditionalOrderRequest,
@@ -72,6 +73,7 @@ import type {
     CancelMarginAccountAllOpenOrdersOnASymbolRequest,
     CancelMarginAccountOcoOrdersRequest,
     CancelMarginAccountOrderRequest,
+    CancelUmAlgoOrderRequest,
     CancelUmConditionalOrderRequest,
     CancelUmOrderRequest,
     CmAccountTradeListRequest,
@@ -88,12 +90,14 @@ import type {
     NewCmConditionalOrderRequest,
     NewCmOrderRequest,
     NewMarginOrderRequest,
+    NewUmAlgoOrderRequest,
     NewUmConditionalOrderRequest,
     NewUmOrderRequest,
     QueryAllCmConditionalOrdersRequest,
     QueryAllCmOrdersRequest,
     QueryAllCurrentCmOpenConditionalOrdersRequest,
     QueryAllCurrentCmOpenOrdersRequest,
+    QueryAllCurrentUmOpenAlgoOrdersRequest,
     QueryAllCurrentUmOpenConditionalOrdersRequest,
     QueryAllCurrentUmOpenOrdersRequest,
     QueryAllMarginAccountOrdersRequest,
@@ -105,12 +109,14 @@ import type {
     QueryCurrentCmOpenConditionalOrderRequest,
     QueryCurrentCmOpenOrderRequest,
     QueryCurrentMarginOpenOrderRequest,
+    QueryCurrentUmOpenAlgoOrderRequest,
     QueryCurrentUmOpenConditionalOrderRequest,
     QueryCurrentUmOpenOrderRequest,
     QueryMarginAccountOrderRequest,
     QueryMarginAccountsAllOcoRequest,
     QueryMarginAccountsOcoRequest,
     QueryMarginAccountsOpenOcoRequest,
+    QueryUmAlgoOrderHistoryRequest,
     QueryUmConditionalOrderHistoryRequest,
     QueryUmModifyOrderHistoryRequest,
     QueryUmOrderRequest,
@@ -171,6 +177,7 @@ import type {} from './types';
 import type {
     CancelAllCmOpenConditionalOrdersResponse,
     CancelAllCmOpenOrdersResponse,
+    CancelAllUmAlgoOpenOrdersResponse,
     CancelAllUmOpenConditionalOrdersResponse,
     CancelAllUmOpenOrdersResponse,
     CancelCmConditionalOrderResponse,
@@ -178,6 +185,7 @@ import type {
     CancelMarginAccountAllOpenOrdersOnASymbolResponse,
     CancelMarginAccountOcoOrdersResponse,
     CancelMarginAccountOrderResponse,
+    CancelUmAlgoOrderResponse,
     CancelUmConditionalOrderResponse,
     CancelUmOrderResponse,
     CmAccountTradeListResponse,
@@ -194,12 +202,14 @@ import type {
     NewCmConditionalOrderResponse,
     NewCmOrderResponse,
     NewMarginOrderResponse,
+    NewUmAlgoOrderResponse,
     NewUmConditionalOrderResponse,
     NewUmOrderResponse,
     QueryAllCmConditionalOrdersResponse,
     QueryAllCmOrdersResponse,
     QueryAllCurrentCmOpenConditionalOrdersResponse,
     QueryAllCurrentCmOpenOrdersResponse,
+    QueryAllCurrentUmOpenAlgoOrdersResponse,
     QueryAllCurrentUmOpenConditionalOrdersResponse,
     QueryAllCurrentUmOpenOrdersResponse,
     QueryAllMarginAccountOrdersResponse,
@@ -211,12 +221,14 @@ import type {
     QueryCurrentCmOpenConditionalOrderResponse,
     QueryCurrentCmOpenOrderResponse,
     QueryCurrentMarginOpenOrderResponse,
+    QueryCurrentUmOpenAlgoOrderResponse,
     QueryCurrentUmOpenConditionalOrderResponse,
     QueryCurrentUmOpenOrderResponse,
     QueryMarginAccountOrderResponse,
     QueryMarginAccountsAllOcoResponse,
     QueryMarginAccountsOcoResponse,
     QueryMarginAccountsOpenOcoResponse,
+    QueryUmAlgoOrderHistoryResponse,
     QueryUmConditionalOrderHistoryResponse,
     QueryUmModifyOrderHistoryResponse,
     QueryUmOrderResponse,
@@ -1184,13 +1196,31 @@ export class RestAPI {
     }
 
     /**
+     * Cancel All UM Algo Open Orders
+     *
+     * Weight: 1
+     *
+     * @summary Cancel All UM Algo Open Orders (TRADE)
+     * @param {CancelAllUmAlgoOpenOrdersRequest} requestParameters Request parameters.
+     *
+     * @returns {Promise<RestApiResponse<CancelAllUmAlgoOpenOrdersResponse>>}
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @see {@link https://developers.binance.com/docs/derivatives/portfolio-margin/trade/Cancel-All-UM-Algo-Open-Orders Binance API Documentation}
+     */
+    cancelAllUmAlgoOpenOrders(
+        requestParameters: CancelAllUmAlgoOpenOrdersRequest
+    ): Promise<RestApiResponse<CancelAllUmAlgoOpenOrdersResponse>> {
+        return this.tradeApi.cancelAllUmAlgoOpenOrders(requestParameters);
+    }
+
+    /**
      * Cancel All UM Open Conditional Orders
      *
      * Weight: 1
      *
-     * @summary Cancel All UM Open Conditional Orders (TRADE)
+     * @summary Cancel All UM Open Conditional Orders
      * @param {CancelAllUmOpenConditionalOrdersRequest} requestParameters Request parameters.
-     *
+     * @deprecated
      * @returns {Promise<RestApiResponse<CancelAllUmOpenConditionalOrdersResponse>>}
      * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
      * @see {@link https://developers.binance.com/docs/derivatives/portfolio-margin/trade/Cancel-All-UM-Open-Conditional-Orders Binance API Documentation}
@@ -1318,15 +1348,35 @@ export class RestAPI {
     }
 
     /**
+     * Cancel an active UM algo order.
+     *
+     * Either `algoId` or `clientAlgoId` must be sent.
+     *
+     * Weight: 1
+     *
+     * @summary Cancel UM Algo Order (TRADE)
+     * @param {CancelUmAlgoOrderRequest} requestParameters Request parameters.
+     *
+     * @returns {Promise<RestApiResponse<CancelUmAlgoOrderResponse>>}
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @see {@link https://developers.binance.com/docs/derivatives/portfolio-margin/trade/Cancel-UM-Algo-Order Binance API Documentation}
+     */
+    cancelUmAlgoOrder(
+        requestParameters: CancelUmAlgoOrderRequest = {}
+    ): Promise<RestApiResponse<CancelUmAlgoOrderResponse>> {
+        return this.tradeApi.cancelUmAlgoOrder(requestParameters);
+    }
+
+    /**
      * Cancel UM Conditional Order
      *
      * Either `strategyId` or `newClientStrategyId` must be sent.
      *
      * Weight: 1
      *
-     * @summary Cancel UM Conditional Order(TRADE)
+     * @summary Cancel UM Conditional Order
      * @param {CancelUmConditionalOrderRequest} requestParameters Request parameters.
-     *
+     * @deprecated
      * @returns {Promise<RestApiResponse<CancelUmConditionalOrderResponse>>}
      * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
      * @see {@link https://developers.binance.com/docs/derivatives/portfolio-margin/trade/Cancel-UM-Conditional-Order Binance API Documentation}
@@ -1682,6 +1732,56 @@ export class RestAPI {
     /**
      * Place new UM conditional order
      *
+     * Algo order with type `STOP`,  parameter `timeInForce` can be sent ( default `GTC`).
+     * Algo order with type `TAKE_PROFIT`,  parameter `timeInForce` can be sent ( default `GTC`).
+     * Condition orders will be triggered when:
+     *
+     * If parameter`priceProtect`is sent as true:
+     * when price reaches the `triggerPrice` , the difference rate between "MARK_PRICE" and "CONTRACT_PRICE" cannot be larger than the "triggerProtect" of the symbol
+     * "triggerProtect" of a symbol can be got from `GET /fapi/v1/exchangeInfo`
+     *
+     * `STOP`, `STOP_MARKET`:
+     * BUY: latest price ("MARK_PRICE" or "CONTRACT_PRICE") >= `triggerPrice`
+     * SELL: latest price ("MARK_PRICE" or "CONTRACT_PRICE") <= `triggerPrice`
+     * `TAKE_PROFIT`, `TAKE_PROFIT_MARKET`:
+     * BUY: latest price ("MARK_PRICE" or "CONTRACT_PRICE") <= `triggerPrice`
+     * SELL: latest price ("MARK_PRICE" or "CONTRACT_PRICE") >= `triggerPrice`
+     * `TRAILING_STOP_MARKET`:
+     * BUY: the lowest price after order placed <= `activatePrice`, and the latest price >= the lowest price * (1 + `callbackRate`)
+     * SELL: the highest price after order placed >= `activatePrice`, and the latest price <= the highest price * (1 - `callbackRate`)
+     *
+     * For `TRAILING_STOP_MARKET`, if you got such error code.
+     * ``{"code": -2021, "msg": "Order would immediately trigger."}``
+     * means that the parameters you send do not meet the following requirements:
+     * BUY: `activatePrice` should be smaller than latest price.
+     * SELL: `activatePrice` should be larger than latest price.
+     *
+     * `STOP_MARKET`, `TAKE_PROFIT_MARKET` with `closePosition`=`true`:
+     * Follow the same rules for condition orders.
+     * If triggered, **close all** current long position( if `SELL`) or current short position( if `BUY`).
+     * Cannot be used with `quantity` paremeter
+     * Cannot be used with `reduceOnly` parameter
+     * In Hedge Mode,cannot be used with `BUY` orders in `LONG` position side. and cannot be used with `SELL` orders in `SHORT` position side
+     * `selfTradePreventionMode` is only effective when `timeInForce` set to `IOC` or `GTC` or `GTD`.
+     *
+     * Weight: 1
+     *
+     * @summary New UM Algo Order (TRADE)
+     * @param {NewUmAlgoOrderRequest} requestParameters Request parameters.
+     *
+     * @returns {Promise<RestApiResponse<NewUmAlgoOrderResponse>>}
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @see {@link https://developers.binance.com/docs/derivatives/portfolio-margin/trade/New-UM-Algo-Order Binance API Documentation}
+     */
+    newUmAlgoOrder(
+        requestParameters: NewUmAlgoOrderRequest
+    ): Promise<RestApiResponse<NewUmAlgoOrderResponse>> {
+        return this.tradeApi.newUmAlgoOrder(requestParameters);
+    }
+
+    /**
+     * Place new UM conditional order
+     *
      * Order with type `STOP/TAKE_PROFIT`, parameter `timeInForce` can be sent ( default `GTC`).
      * Condition orders will be triggered when:
      * `STOP`, `STOP_MARKET`:
@@ -1711,9 +1811,9 @@ export class RestAPI {
      *
      * Weight: 1
      *
-     * @summary New UM Conditional Order (TRADE)
+     * @summary New UM Conditional Order
      * @param {NewUmConditionalOrderRequest} requestParameters Request parameters.
-     *
+     * @deprecated
      * @returns {Promise<RestApiResponse<NewUmConditionalOrderResponse>>}
      * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
      * @see {@link https://developers.binance.com/docs/derivatives/portfolio-margin/trade/New-UM-Conditional-Order Binance API Documentation}
@@ -1837,6 +1937,27 @@ export class RestAPI {
     }
 
     /**
+     * Get all UM open algo orders on a symbol.
+     *
+     * If the symbol is not sent, orders for all symbols will be returned in an array.
+     *
+     * Weight: 1 for a single symbol; 40 when the symbol parameter is omitted
+     * Careful when accessing this with no symbol.
+     *
+     * @summary Query All Current UM Open Algo Orders (USER_DATA)
+     * @param {QueryAllCurrentUmOpenAlgoOrdersRequest} requestParameters Request parameters.
+     *
+     * @returns {Promise<RestApiResponse<QueryAllCurrentUmOpenAlgoOrdersResponse>>}
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @see {@link https://developers.binance.com/docs/derivatives/portfolio-margin/trade/Query-All-Current-UM-Open-Algo-Orders Binance API Documentation}
+     */
+    queryAllCurrentUmOpenAlgoOrders(
+        requestParameters: QueryAllCurrentUmOpenAlgoOrdersRequest = {}
+    ): Promise<RestApiResponse<QueryAllCurrentUmOpenAlgoOrdersResponse>> {
+        return this.tradeApi.queryAllCurrentUmOpenAlgoOrders(requestParameters);
+    }
+
+    /**
      * Get all open conditional orders on a symbol.
      *
      * If the symbol is not sent, orders for all symbols will be returned in an array.
@@ -1844,9 +1965,9 @@ export class RestAPI {
      * Weight: 1 for a single symbol; 40 when the symbol parameter is omitted
      * Careful when accessing this with no symbol.
      *
-     * @summary Query All Current UM Open Conditional Orders(USER_DATA)
+     * @summary Query All Current UM Open Conditional Orders
      * @param {QueryAllCurrentUmOpenConditionalOrdersRequest} requestParameters Request parameters.
-     *
+     * @deprecated
      * @returns {Promise<RestApiResponse<QueryAllCurrentUmOpenConditionalOrdersResponse>>}
      * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
      * @see {@link https://developers.binance.com/docs/derivatives/portfolio-margin/trade/Query-All-Current-UM-Open-Conditional-Orders Binance API Documentation}
@@ -1907,9 +2028,9 @@ export class RestAPI {
      *
      * Weight: 1 for a single symbol; 40 when the symbol parameter is omitted
      *
-     * @summary Query All UM Conditional Orders(USER_DATA)
+     * @summary Query All UM Conditional Orders
      * @param {QueryAllUmConditionalOrdersRequest} requestParameters Request parameters.
-     *
+     * @deprecated
      * @returns {Promise<RestApiResponse<QueryAllUmConditionalOrdersResponse>>}
      * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
      * @see {@link https://developers.binance.com/docs/derivatives/portfolio-margin/trade/Query-All-UM-Conditional-Orders Binance API Documentation}
@@ -2076,6 +2197,31 @@ export class RestAPI {
     }
 
     /**
+     * Check an UM algo order's status.
+     *
+     * These orders will not be found:
+     * order status is `CANCELED` or `EXPIRED` **AND** order has NO filled trade **AND** created time + 3 days < current time
+     * order create time + 90 days < current time
+     *
+     * Either `algoId` or `clientAlgoId` must be sent.
+     * `algoId` is self-increment for each specific `symbol`
+     *
+     * Weight: 1
+     *
+     * @summary Query Current UM Open Algo Order (USER_DATA)
+     * @param {QueryCurrentUmOpenAlgoOrderRequest} requestParameters Request parameters.
+     *
+     * @returns {Promise<RestApiResponse<QueryCurrentUmOpenAlgoOrderResponse>>}
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @see {@link https://developers.binance.com/docs/derivatives/portfolio-margin/trade/Query-Current-UM-Open-Algo-Order Binance API Documentation}
+     */
+    queryCurrentUmOpenAlgoOrder(
+        requestParameters: QueryCurrentUmOpenAlgoOrderRequest = {}
+    ): Promise<RestApiResponse<QueryCurrentUmOpenAlgoOrderResponse>> {
+        return this.tradeApi.queryCurrentUmOpenAlgoOrder(requestParameters);
+    }
+
+    /**
      * Query Current UM Open Conditional Order
      *
      * Either `strategyId` or `newClientStrategyId` must be sent.
@@ -2083,9 +2229,9 @@ export class RestAPI {
      *
      * Weight: 1
      *
-     * @summary Query Current UM Open Conditional Order(USER_DATA)
+     * @summary Query Current UM Open Conditional Order
      * @param {QueryCurrentUmOpenConditionalOrderRequest} requestParameters Request parameters.
-     *
+     * @deprecated
      * @returns {Promise<RestApiResponse<QueryCurrentUmOpenConditionalOrderResponse>>}
      * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
      * @see {@link https://developers.binance.com/docs/derivatives/portfolio-margin/trade/Query-Current-UM-Open-Conditional-Order Binance API Documentation}
@@ -2191,6 +2337,27 @@ export class RestAPI {
     }
 
     /**
+     * Get all algo orders; ACTIVE, CANCELED, TRIGGERED or FINISHED .
+     *
+     * If `algoId` is set, it will get orders >= that `algoId`. Otherwise most recent orders are returned.
+     * The query time period must be less then 7 days( default as the recent 7 days).
+     *
+     * Weight: 5
+     *
+     * @summary Query UM Algo Order History (USER_DATA)
+     * @param {QueryUmAlgoOrderHistoryRequest} requestParameters Request parameters.
+     *
+     * @returns {Promise<RestApiResponse<QueryUmAlgoOrderHistoryResponse>>}
+     * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
+     * @see {@link https://developers.binance.com/docs/derivatives/portfolio-margin/trade/Query-UM-Algo-Order-History Binance API Documentation}
+     */
+    queryUmAlgoOrderHistory(
+        requestParameters: QueryUmAlgoOrderHistoryRequest
+    ): Promise<RestApiResponse<QueryUmAlgoOrderHistoryResponse>> {
+        return this.tradeApi.queryUmAlgoOrderHistory(requestParameters);
+    }
+
+    /**
      * Query UM Conditional Order History
      *
      * Either `strategyId` or `newClientStrategyId` must be sent.
@@ -2202,9 +2369,9 @@ export class RestAPI {
      *
      * Weight: 1
      *
-     * @summary Query UM Conditional Order History(USER_DATA)
+     * @summary Query UM Conditional Order History
      * @param {QueryUmConditionalOrderHistoryRequest} requestParameters Request parameters.
-     *
+     * @deprecated
      * @returns {Promise<RestApiResponse<QueryUmConditionalOrderHistoryResponse>>}
      * @throws {RequiredError | ConnectorClientError | UnauthorizedError | ForbiddenError | TooManyRequestsError | RateLimitBanError | ServerError | NotFoundError | NetworkError | BadRequestError}
      * @see {@link https://developers.binance.com/docs/derivatives/portfolio-margin/trade/Query-UM-Conditional-Order-History Binance API Documentation}
