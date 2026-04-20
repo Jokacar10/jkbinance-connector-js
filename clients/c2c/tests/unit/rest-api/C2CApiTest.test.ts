@@ -37,28 +37,24 @@ describe('C2CApi', () => {
         it('should execute getC2CTradeHistory() successfully with required parameters only', async () => {
             mockResponse = JSONParse(
                 JSONStringify({
-                    code: '000000',
-                    message: 'success',
-                    data: [
-                        {
-                            orderNumber: '20219644646554779648',
-                            advNo: '11218246497340923904',
-                            tradeType: 'SELL',
-                            asset: 'BUSD',
-                            fiat: 'CNY',
-                            fiatSymbol: '￥',
-                            amount: '5000.00000000',
-                            totalPrice: '33400.00000000',
-                            unitPrice: '6.68',
-                            orderStatus: 'COMPLETED',
-                            createTime: 1619361369000,
-                            commission: '0',
-                            counterPartNickName: 'ab***',
-                            advertisementRole: 'TAKER',
-                        },
-                    ],
-                    total: 1,
-                    success: true,
+                    orderNumber: '20219644646554779648',
+                    advNo: '11218246497340923904',
+                    tradeType: 'SELL',
+                    asset: 'USDT',
+                    fiat: 'CNY',
+                    fiatSymbol: '¥',
+                    amount: '343.40000000',
+                    totalPrice: '2500.00000000',
+                    unitPrice: '7.28',
+                    orderStatus: 'COMPLETED',
+                    createTime: 1722997599534,
+                    commission: '0',
+                    takerCommissionRate: '0',
+                    takerCommission: '0',
+                    takerAmount: '343.4',
+                    counterPartNickName: 'aaa-***',
+                    payMethodName: 'BANK',
+                    additionalKycVerify: 0,
                 })
             );
 
@@ -88,28 +84,24 @@ describe('C2CApi', () => {
 
             mockResponse = JSONParse(
                 JSONStringify({
-                    code: '000000',
-                    message: 'success',
-                    data: [
-                        {
-                            orderNumber: '20219644646554779648',
-                            advNo: '11218246497340923904',
-                            tradeType: 'SELL',
-                            asset: 'BUSD',
-                            fiat: 'CNY',
-                            fiatSymbol: '￥',
-                            amount: '5000.00000000',
-                            totalPrice: '33400.00000000',
-                            unitPrice: '6.68',
-                            orderStatus: 'COMPLETED',
-                            createTime: 1619361369000,
-                            commission: '0',
-                            counterPartNickName: 'ab***',
-                            advertisementRole: 'TAKER',
-                        },
-                    ],
-                    total: 1,
-                    success: true,
+                    orderNumber: '20219644646554779648',
+                    advNo: '11218246497340923904',
+                    tradeType: 'SELL',
+                    asset: 'USDT',
+                    fiat: 'CNY',
+                    fiatSymbol: '¥',
+                    amount: '343.40000000',
+                    totalPrice: '2500.00000000',
+                    unitPrice: '7.28',
+                    orderStatus: 'COMPLETED',
+                    createTime: 1722997599534,
+                    commission: '0',
+                    takerCommissionRate: '0',
+                    takerCommission: '0',
+                    takerAmount: '343.4',
+                    counterPartNickName: 'aaa-***',
+                    payMethodName: 'BANK',
+                    additionalKycVerify: 0,
                 })
             );
 

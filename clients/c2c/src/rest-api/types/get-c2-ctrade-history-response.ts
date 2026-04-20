@@ -1,5 +1,4 @@
 /* tslint:disable */
-/* eslint-disable */
 
 /**
  * Binance C2C REST API
@@ -14,10 +13,6 @@
  * Do not edit the class manually.
  */
 
-// May contain unused imports in some cases
-// @ts-ignore
-import type { GetC2CTradeHistoryResponseDataInner } from './get-c2-ctrade-history-response-data-inner';
-
 /**
  *
  * @export
@@ -29,29 +24,107 @@ export interface GetC2CTradeHistoryResponse {
      * @type {string}
      * @memberof GetC2CTradeHistoryResponse
      */
-    code?: string;
+    orderNumber?: string;
     /**
      *
      * @type {string}
      * @memberof GetC2CTradeHistoryResponse
      */
-    message?: string;
+    advNo?: string;
     /**
      *
-     * @type {Array<GetC2CTradeHistoryResponseDataInner>}
+     * @type {string}
      * @memberof GetC2CTradeHistoryResponse
      */
-    data?: Array<GetC2CTradeHistoryResponseDataInner>;
+    tradeType?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof GetC2CTradeHistoryResponse
+     */
+    asset?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof GetC2CTradeHistoryResponse
+     */
+    fiat?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof GetC2CTradeHistoryResponse
+     */
+    fiatSymbol?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof GetC2CTradeHistoryResponse
+     */
+    amount?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof GetC2CTradeHistoryResponse
+     */
+    totalPrice?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof GetC2CTradeHistoryResponse
+     */
+    unitPrice?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof GetC2CTradeHistoryResponse
+     */
+    orderStatus?: string;
     /**
      *
      * @type {number | bigint}
      * @memberof GetC2CTradeHistoryResponse
      */
-    total?: number | bigint;
+    createTime?: number | bigint;
     /**
      *
-     * @type {boolean}
+     * @type {string}
      * @memberof GetC2CTradeHistoryResponse
      */
-    success?: boolean;
+    commission?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof GetC2CTradeHistoryResponse
+     */
+    takerCommissionRate?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof GetC2CTradeHistoryResponse
+     */
+    takerCommission?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof GetC2CTradeHistoryResponse
+     */
+    takerAmount?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof GetC2CTradeHistoryResponse
+     */
+    counterPartNickName?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof GetC2CTradeHistoryResponse
+     */
+    payMethodName?: string;
+    /**
+     *
+     * @type {number | bigint}
+     * @memberof GetC2CTradeHistoryResponse
+     */
+    additionalKycVerify?: number | bigint;
 }
