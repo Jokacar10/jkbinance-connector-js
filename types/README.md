@@ -4,7 +4,7 @@
 [![npm version](https://badge.fury.io/js/@binance%2Ftypes.svg)](https://badge.fury.io/js/@binance%2Ftypes)
 [![npm Downloads](https://img.shields.io/npm/dm/@binance/types.svg)](https://www.npmjs.com/package/@binance/types)
 ![Node.js Version](https://img.shields.io/badge/Node.js-%3E=22.12.0-brightgreen)
-[![Known Vulnerabilities](https://snyk.io/test/github/binance/binance-connector-js/badge.svg)](https://snyk.io/test/github/binance/binance-connector-js)
+[![Socket Badge](https://socket.dev/api/badge/npm/package/@binance/types)](https://socket.dev/npm/package/@binance/types)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 `@binance/types` is a **TypeScript type definition package** for Binance modular connectors. It centralizes shared **interfaces, types, and error classes**, ensuring consistency across all Binance Connectors.
