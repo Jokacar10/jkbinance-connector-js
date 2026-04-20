@@ -42,4 +42,16 @@ export interface ReferencePriceResponseResult {
      * @memberof ReferencePriceResponseResult
      */
     timestamp?: number | bigint;
+    /**
+     *
+     * @type {number | bigint}
+     * @memberof ReferencePriceResponseResult
+     */
+    code?: number | bigint;
+    /**
+     *
+     * @type {string}
+     * @memberof ReferencePriceResponseResult
+     */
+    msg?: string;
 }

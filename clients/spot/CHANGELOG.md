@@ -1,5 +1,15 @@
 # Changelog
 
+## 29.0.0 - 2026-04-20
+
+### Changed (1)
+
+#### WebSocket API
+
+- Modified response for `referencePrice()` (`referencePrice` method):
+  - `result`: property `code` added
+  - `result`: property `msg` added
+
 ## 28.0.6 - 2026-04-15
 
 ### Changed (2)

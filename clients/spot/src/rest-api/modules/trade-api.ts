@@ -587,7 +587,7 @@ const TradeApiAxiosParamCreator = function (configuration: ConfigurationRestAPI)
          * @param {string} [belowClientOrderId] Arbitrary unique ID among open orders for the below order. Automatically generated if not sent
          * @param {number | bigint} [belowIcebergQty] Note that this can only be used if `belowTimeInForce` is `GTC`.
          * @param {number} [belowPrice] Can be used if `belowType` is `STOP_LOSS_LIMIT`, `LIMIT_MAKER`, or `TAKE_PROFIT_LIMIT` to specify the limit price.
-         * @param {number} [belowStopPrice] Can be used if `belowType` is `STOP_LOSS`, `STOP_LOSS_LIMIT, TAKE_PROFIT` or `TAKE_PROFIT_LIMIT` <br>Either belowStopPrice or belowTrailingDelta or both, must be specified.
+         * @param {number} [belowStopPrice] Can be used if `belowType` is `STOP_LOSS`, `STOP_LOSS_LIMIT`, `TAKE_PROFIT` or `TAKE_PROFIT_LIMIT` <br>Either `belowStopPrice` or `belowTrailingDelta` or both, must be specified.
          * @param {number | bigint} [belowTrailingDelta] See [Trailing Stop order FAQ](faqs/trailing-stop-faq.md).
          * @param {OrderListOcoBelowTimeInForceEnum} [belowTimeInForce]
          * @param {number | bigint} [belowStrategyId] Arbitrary numeric value identifying the below order within an order strategy.
@@ -3059,7 +3059,7 @@ export interface OrderListOcoRequest {
     readonly belowPrice?: number;
 
     /**
-     * Can be used if `belowType` is `STOP_LOSS`, `STOP_LOSS_LIMIT, TAKE_PROFIT` or `TAKE_PROFIT_LIMIT` <br>Either belowStopPrice or belowTrailingDelta or both, must be specified.
+     * Can be used if `belowType` is `STOP_LOSS`, `STOP_LOSS_LIMIT`, `TAKE_PROFIT` or `TAKE_PROFIT_LIMIT` <br>Either `belowStopPrice` or `belowTrailingDelta` or both, must be specified.
      * @type {number}
      * @memberof TradeApiOrderListOco
      */
